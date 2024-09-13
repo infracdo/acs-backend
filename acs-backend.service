@@ -1,0 +1,18 @@
+[Unit]
+Description=ACS-Backend APP
+
+[Service]
+User=apollo
+Group=apollo
+Type=simple
+ExecStart=/usr/bin/java -jar /home/apollo/acs-backend/target/test_tr069-0.0.1-SNAPSHOT.war
+SuccessExitStatus=143
+
+[Install]
+WantedBy=multi-user.target
+
+
+
+
+
+

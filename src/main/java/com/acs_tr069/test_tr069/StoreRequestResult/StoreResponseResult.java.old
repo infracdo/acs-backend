@@ -1,0 +1,22 @@
+package com.acs_tr069.test_tr069.StoreRequestResult;
+
+import javax.xml.soap.SOAPBody;
+
+public class StoreResponseResult {
+    
+    public static String getResponseResult(SOAPBody convertedBody, String getResponsetype){
+        if(getResponsetype.contains("GetParameterValues")){
+            System.out.println(convertedBody.getElementsByTagName("Value").item(0).getTextContent());
+            return convertedBody.getElementsByTagName("Value").item(0).getTextContent();
+        }
+        if(getResponsetype.contains("SetParameterValuesResponse")){
+            System.out.println(convertedBody.getChildNodes().item(0).getTextContent());
+            return convertedBody.getChildNodes().item(0).getTextContent();
+        }
+        if(getResponsetype.contains("RebootResponse")){
+            System.out.println(convertedBody.getChildNodes().item(0).getTextContent());
+            return convertedBody.getChildNodes().item(0).getTextContent();
+        }
+        return "";
+    }
+}

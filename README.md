@@ -119,3 +119,8 @@ You can access the frontend and backend of your application locally:
   Backend: [http://localhost:8080](http://localhost:8080/)
 
  Note: If the application is not accessible, ensure you have VPN access if required.
+
+ ---
+ ## PGLOADER
+
+ I added a pgloader setup instruction as a useful tool for migrating from mysql to postgresql its in ```pgloader.md```

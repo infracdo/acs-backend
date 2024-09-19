@@ -69,10 +69,10 @@ docker ps
 Clone the repository to your local machine:
 
 ```bash
-git clone https://github.com/infracdo/acs-be.git
+git clone https://github.com/apollo-com-ph/acs-backend.git
 ```
 ```
-git clone https://github.com/infracdo/acs-fe.git
+git clone https://github.com/apollo-com-ph/acs-frontend.git
 ```
 - note: clone it inside /home/user/
 
@@ -82,7 +82,7 @@ git clone https://github.com/infracdo/acs-fe.git
 Navigate to your project directory and start Docker:
 
 ```bash
-cd /home/$USER/acs-be
+cd /home/$USER/acs-backend
 ```
 ```
 docker compose up --build -d

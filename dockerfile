@@ -16,7 +16,7 @@ WORKDIR /app
 COPY --from=build /app/target/test_tr069-0.0.1-SNAPSHOT.war /app/test_tr069-0.0.1-SNAPSHOT.war
 
 # Expose the application port
-EXPOSE 8080
+EXPOSE 7547
 
 # Run the WAR file
 ENTRYPOINT ["java", "-jar", "/app/test_tr069-0.0.1-SNAPSHOT.war"]

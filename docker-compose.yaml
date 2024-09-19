@@ -2,7 +2,7 @@ services:
 
   frontend:
     build:
-      context: /home/$USER/acs-frontend
+      context: /home/$USER/acs-fe
       dockerfile: Dockerfile
     ports:
       - "80:80"  # Change port as necessary
@@ -20,7 +20,7 @@ services:
       DB_USERNAME: apollo
       DB_PASSWORD: root
     ports:
-      - "8080:8080"
+      - "7547"
     networks:
       - app-network
     depends_on:

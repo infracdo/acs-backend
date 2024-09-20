@@ -20,7 +20,7 @@ services:
       DB_USERNAME: apollo
       DB_PASSWORD: root
     ports:
-      - "7547"
+      - "7547:7547"
     networks:
       - app-network
     depends_on:

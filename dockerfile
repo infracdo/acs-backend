@@ -2,8 +2,18 @@
 FROM maven:3.6.3-jdk-8 AS build
 WORKDIR /app
 
-# Copy the project files into the container
-COPY . .
+COPY ./pom.xml ./
+COPY ./.mvn ./.mvn
+
+RUN mvn dependency:go-offline -B
+
+COPY ./src ./src
+
+# Create logs directory in the container
+RUN mkdir -p /app/logs
+
+# Set proper permissions if necessary
+RUN chmod 755 /app/logs
 
 # Run Maven to build the project and create the WAR file
 RUN mvn clean package -DskipTests

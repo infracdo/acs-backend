@@ -2,7 +2,7 @@ services:
 
   frontend:
     build:
-      context: /home/$USER/acs-frontend
+      context: /home/$USER/acs-fe
       dockerfile: Dockerfile
     ports:
       - "80:80"  # Change port as necessary
@@ -13,6 +13,10 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+    volumes:
+      - ./src:/app/src
+      - ./target:/app/target
+      - ./logs:/app/logs
     environment:
       DB_HOST: 192.168.90.101
       DB_PORT: 5432
@@ -20,11 +24,12 @@ services:
       DB_USERNAME: apollo
       DB_PASSWORD: root
     ports:
-      - "8080:8080"
+      - "7547:7547"
     networks:
       - app-network
     depends_on:
       - frontend
+    command: ./mvnw spring-boot:run
 
 networks:
   app-network:

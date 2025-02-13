@@ -9,7 +9,7 @@ on:
 jobs:
   build-and-push:
     name: Build and Push Docker Image
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
 
     steps:
       # Step 1: Checkout the code

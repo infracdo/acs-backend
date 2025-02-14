@@ -2786,7 +2786,7 @@ public class testController {
 
         // Set the API endpoint
         System.out.println("Call to AutoProv Server for SN Association");
-        String apiUrl = "http://192.168.90.72:8080/getClientBySerialNumber/" + SerialNumber;
+        String apiUrl = "http://192.168.32.16:7549/getClientBySerialNumber/" + SerialNumber;
 
         // Make the HTTP GET request
         RestTemplate restTemplate = new RestTemplate();

@@ -6,6 +6,7 @@ services:
       dockerfile: Dockerfile
     ports:
       - "80:80"  # Change port as necessary
+      - "443:443"
     networks:
       - app-network
     restart: unless-stopped

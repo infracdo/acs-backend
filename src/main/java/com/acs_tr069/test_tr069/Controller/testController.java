@@ -2786,7 +2786,7 @@ public class testController {
 
         // Set the API endpoint
         System.out.println("Call to AutoProv Server for SN Association");
-        String apiUrl = "https://hive-backend.k8s.apolloglobal.net/getClientBySerialNumber/" + SerialNumber;
+        String apiUrl = "https://hive-backend-test.dataconnect.com.ph/getClientBySerialNumber/" + SerialNumber;
 
         // Make the HTTP GET request
         RestTemplate restTemplate = new RestTemplate();

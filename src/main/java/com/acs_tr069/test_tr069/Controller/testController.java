@@ -211,6 +211,7 @@ public class testController {
      * }
      */
 
+    // TANAN TR069 NA GINA SEND SA ROUTER DANI MO AGI
     @Async("asyncExecutor")
     @PostMapping(value = "/")
     public CompletableFuture<DeferredResult<ResponseEntity<String>>> TestDevice(
@@ -475,6 +476,7 @@ public class testController {
         return CompletableFuture.completedFuture(result);
     }
 
+    // sa ruijie specific nga CPE / Routers
     public void SaveClients(String serial_num, String content) throws JSONException {
         System.out.println(content);
         JSONObject data = new JSONObject(content);
@@ -2786,7 +2788,10 @@ public class testController {
 
         // Set the API endpoint
         System.out.println("Call to AutoProv Server for SN Association");
-        String apiUrl = "https://autoprov-test.apolloglobal.net:8081/getClientBySerialNumber/" + SerialNumber;
+        // String apiUrl =
+        // "https://autoprov-test.apolloglobal.net:8081/getClientBySerialNumber/" +
+        // SerialNumber;
+        String apiUrl = "https://hivetest.apolloglobal.net:8081/getClientBySerialNumber/" + SerialNumber;
 
         // Make the HTTP GET request
         RestTemplate restTemplate = new RestTemplate();
@@ -3172,7 +3177,7 @@ public class testController {
     public CompletableFuture<String> resetSsid(@RequestBody Map<String, String> params) {
         try {
             SaveTask(params.get("serialNumber"), "GetParameterValues", "InternetGatewayDevice", "None");
-            ConfigureSSID(params.get("serialNumber"), params.get("clientName"));
+            ConfigureSSID(params.get("serialNumber"), params.get("accountNo"));
             return CompletableFuture.completedFuture("SSID and Password Reset Task Pushed");
         } catch (NullPointerException e) {
             e.printStackTrace();
@@ -3184,19 +3189,18 @@ public class testController {
     @PostMapping("/executeAutoConfig")
     public CompletableFuture<String> executeAutoConfig(@RequestBody Map<String, String> params)
             throws InterruptedException {
-
         System.out.println("----------- Invoked executeAutoConfig from HiveConnect -----------");
         System.out.println(
-                params.get("serialNumber") + params.get("clientName") + params.get("vlanId") + params.get("ipAddress"));
-
+                params.get("serialNumber") + params.get("accountNumber") + params.get("clientName")
+                        + params.get("vlanId") + params.get("ipAddress"));
+        String ssid = params.get("accountNumber") != null ? params.get("accountNumber") : params.get("clientName"); 
         try {
             SaveTask(params.get("serialNumber"), "GetParameterValues", "InternetGatewayDevice", "None");
         } catch (NullPointerException e) {
             e.printStackTrace();
             return CompletableFuture.completedFuture("Error on Configuration. Fault: Serial Number Not Found");
         }
-
-        ConfigureSSID(params.get("serialNumber"), params.get("clientName"));
+        ConfigureSSID(params.get("serialNumber"), ssid); // changed ssid from clientName to accountNumber
         AddRoutedWANConfiguration(params.get("serialNumber"), params.get("vlanId"), params.get("ipAddress"),
                 params.get("defaultGateway"), null, null);
         toggleService(params.get("serialNumber"));

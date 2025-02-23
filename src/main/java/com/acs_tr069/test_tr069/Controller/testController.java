@@ -2791,7 +2791,7 @@ public class testController {
         // String apiUrl =
         // "https://autoprov-test.apolloglobal.net:8081/getClientBySerialNumber/" +
         // SerialNumber;
-        String apiUrl = "http://10.160.0.62:7549/getClientBySerialNumber/" + SerialNumber;
+        String apiUrl = "http://10.160.0.61:7549/getClientBySerialNumber/" + SerialNumber;
 
         // Make the HTTP GET request
         RestTemplate restTemplate = new RestTemplate();

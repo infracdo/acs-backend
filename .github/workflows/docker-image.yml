@@ -3,7 +3,7 @@ name: Build and Push Docker Image
 on:
   push:
     branches:
-      - davao-acs  # Trigger on pushes to the main branch
+      - acs-sbx  # Trigger on pushes to the main branch
   pull_request:  # Trigger on pull requests
 
 jobs:
@@ -27,10 +27,10 @@ jobs:
       - name: Build Docker Image
         run: 
           # docker build --target build -t my-image:build .
-          docker build -t acs-backend-test:latest .
+          docker build -t acs-backend:sbx .
 
       # Step 4: Push the Docker image
       - name: Push Docker Image
         run: |
-          docker tag acs-backend-test:latest infracdo/acs-backend-test:latest
-          docker push infracdo/acs-backend-test:latest
+          docker tag acs-backend:sbx infracdo/acs-backend:sbx
+          docker push infracdo/acs-backend:sbx

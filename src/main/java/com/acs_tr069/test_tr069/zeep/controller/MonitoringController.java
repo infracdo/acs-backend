@@ -25,9 +25,9 @@ public class MonitoringController {
     }
 
     // Get current number of connected users
-    @GetMapping("/count-connected-users")
-    public ResponseEntity<Map<String, Object>> getCountConnectedUsers() {
-        long countConnectedUsers = monitoringService.getCountConnectedUsers();
+    @GetMapping("/count-current-connected-users")
+    public ResponseEntity<Map<String, Object>> getCountCurrentConnectedUsers() {
+        long countConnectedUsers = monitoringService.getCountCurrentConnectedUsers();
 
         Map<String, Object> response = new HashMap<>();
         response.put("connectedUsers", countConnectedUsers);
@@ -36,9 +36,9 @@ public class MonitoringController {
     }
 
     // Get current number of connected access points (APs)
-    @GetMapping("/count-connected-aps")
-    public ResponseEntity<Map<String, Object>> getCountConnectedAPs() {
-        long countConnectedAPs = monitoringService.getCountConnectedAPs();
+    @GetMapping("/count-current-connected-aps")
+    public ResponseEntity<Map<String, Object>> getCountCurrentConnectedAPs() {
+        long countConnectedAPs = monitoringService.getCountCurrentConnectedAPs();
 
         Map<String, Object> response = new HashMap<>();
         response.put("connectedAPs", countConnectedAPs);
@@ -64,6 +64,17 @@ public class MonitoringController {
 
         Map<String, Object> response = new HashMap<>();
         response.put("totalBandwidthConsumptionToday", totalBandwidthConsumptionToday);
+
+        return ResponseEntity.ok(response);
+    }
+
+    // Get average connection time
+    @GetMapping("/avg-connection-time")
+    public ResponseEntity<Map<String, Object>> getAvgConnectionTime() {
+        double averageConnectionTime = monitoringService.getAvgConnectionTime();
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("averageConnectionTime", averageConnectionTime);
 
         return ResponseEntity.ok(response);
     }

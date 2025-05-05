@@ -1,5 +1,8 @@
 package com.acs_tr069.test_tr069.zeep.service;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -13,6 +16,8 @@ import com.acs_tr069.test_tr069.zeep.repository.AccTransactionsRepository;
 @Service
 public class MonitoringService {
 
+    private static final Logger log = LoggerFactory.getLogger(MonitoringService.class);
+
     private final AccTransactionsRepository accTransactionsRepository;
     private final AccSessionsRepository accSessionsRepository;
 
@@ -24,13 +29,13 @@ public class MonitoringService {
     }
 
     // Return current number of connected users
-    public long getCountConnectedUsers() {
-        return accTransactionsRepository.countConnectedUsers();
+    public long getCountCurrentConnectedUsers() {
+        return accTransactionsRepository.countCurrentConnectedUsers();
     }
 
     // Return current number of connected access points (APs)
-    public Long getCountConnectedAPs() {
-        return accTransactionsRepository.countConnectedAPs();
+    public Long getCountCurrentConnectedAPs() {
+        return accTransactionsRepository.countCurrentConnectedAPs();
     }
 
     // Return total user connections for today
@@ -40,19 +45,42 @@ public class MonitoringService {
 
     // Return total bandwidth consumption for today
     public double getTotalBandwidthConsumptionToday() {
-        return accSessionsRepository.totalBandwidthConsumptionToday();
+        Long totalBandwidthConsumptionToday = accTransactionsRepository.totalBandwidthConsumptionToday();
+
+        // return accSessionsRepository.totalBandwidthConsumptionToday();
+        return Math.round((totalBandwidthConsumptionToday / (1024.0 * 1024.0)) * 100.0) / 100.0;
+    }
+
+    // Return average connection time
+    public double getAvgConnectionTime() {
+        try {
+            Double averageSeconds = accTransactionsRepository.avgConnectionTime();
+            if (averageSeconds == null || averageSeconds == 0) {
+                return 0.0;
+            }
+
+            double averageMinutes = averageSeconds / 60.0;
+            return Math.round(averageMinutes * 10.0) / 10.0;
+        } catch (Exception e) {
+            log.error("Error calculating average connection time: ", e);
+            return 0.0; // Fallback value
+        }
     }
 
     // Return average bandwidth per connection
     public double getAvgBandwidthPerConnection() {
-        double totalBandwidth = accSessionsRepository.totalBandwidthConsumptionToday();
+        // double totalBandwidth = accSessionsRepository.totalBandwidthConsumptionToday();
+        long totalBandwidthBytes = accTransactionsRepository.totalBandwidthConsumptionToday();
         long totalConnections = accTransactionsRepository.totalUserConnectionsToday();
 
         if (totalConnections == 0) {
             return 0.0;
         }
+
+        double totalBandwidthMB = totalBandwidthBytes / (1024.0 * 1024.0);
+        double averageMB = totalBandwidthMB / totalConnections;
         
-        return totalBandwidth / totalConnections;
+        return Math.round(averageMB * 100.0) / 100.0;
     }
 
     // Return number of currently connected users per access point (AP)

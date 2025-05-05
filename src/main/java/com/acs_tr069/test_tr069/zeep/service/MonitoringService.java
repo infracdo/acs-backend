@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -84,12 +85,14 @@ public class MonitoringService {
     }
 
     // Return number of currently connected users per access point (AP)
-    public Map<String, Long> getCountConnectedUsersPerAP() {
-        List<Object[]> results = accTransactionsRepository.countConnectedUsersPerAP();
-
+    public Map<String, Long> getCountCurrentConnectedUsersPerAP() {
+        List<Object[]> results = accTransactionsRepository.countCurrentConnectedUsersPerAP();
         Map<String, Long> response = new HashMap<>();
+
         for (Object[] row : results) {
-            response.put((String) row[0], (Long) row[1]);
+            String apMac = (String) row[0];
+            Number count = (Number) row[1];
+            response.put(apMac, count.longValue());
         }
         return response;
     }
@@ -97,23 +100,26 @@ public class MonitoringService {
     // Return list of currently connected users per access point (AP)
     public Map<String, List<Map<String, Object>>> getCurrentConnectedUsersPerAP() {
         List<Object[]> results = accTransactionsRepository.findCurrentConnectedUsersPerAP();
+        Map<String, List<Map<String, Object>>> response = new LinkedHashMap<>();
 
-        Map<String, List<Map<String, Object>>> response = new HashMap<>();
         for (Object[] row : results) {
             String apMac = (String) row[0];
+            long totalBytes  = ((Number) row[8]).longValue() + ((Number) row[9]).longValue();
+            double bandwidthMB = totalBytes / (1024.0 * 1024.0);
             
-            Map<String, Object> userMap = new HashMap<>();
-            userMap.put("accountNumber", row[1] != null ? row[1].toString() : "");
-            userMap.put("package", row[2] != null ? row[2].toString() : "");
-            userMap.put("macAddress", row[3] != null ? row[3].toString() : "");
-            userMap.put("device", row[4] != null ? row[4].toString() : "");
-            userMap.put("ipAddress", row[5] != null ? row[5].toString() : "");
-            userMap.put("ssid", row[6] != null ? row[6].toString() : "");
-            userMap.put("lastActive", row[7] != null ? row[7].toString() : "");
-            userMap.put("totalIncomingPackets", row[8] != null ? row[8].toString() : "");
-            userMap.put("totalOutgoingPackets", row[9] != null ? row[9].toString() : "");
+            Map<String, Object> user = new LinkedHashMap<>();
+            user.put("accountNumber", row[1] != null ? row[1].toString() : "");
+            user.put("package", row[2] != null ? row[2].toString() : "");
+            user.put("macAddress", row[3] != null ? row[3].toString() : "");
+            user.put("device", row[4] != null ? row[4].toString() : "");
+            user.put("ipAddress", row[5] != null ? row[5].toString() : "");
+            user.put("ssid", row[6] != null ? row[6].toString() : "");
+            user.put("lastActive", row[7] != null ? row[7].toString() : "");
+            user.put("bandwidthMB", Math.round(bandwidthMB * 100.0) / 100.0);
+            // user.put("totalIncomingPackets", row[8] != null ? row[8].toString() : "");
+            // user.put("totalOutgoingPackets", row[9] != null ? row[9].toString() : "");
 
-            response.computeIfAbsent(apMac, k -> new ArrayList<>()).add(userMap);
+            response.computeIfAbsent(apMac, k -> new ArrayList<>()).add(user);
         }
 
         return response;

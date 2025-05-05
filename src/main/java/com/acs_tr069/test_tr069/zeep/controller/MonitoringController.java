@@ -2,8 +2,10 @@ package com.acs_tr069.test_tr069.zeep.controller;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -91,17 +93,19 @@ public class MonitoringController {
     }
 
     // Get number of currently connected users per access point (AP)
-    @GetMapping("/count-connected-users-per-ap")
-    public ResponseEntity<List<Map<String, Object>>> getCountConnectedUsersPerAp() {
-        Map<String, Long> currentConnectedUsersPerApCount = monitoringService.getCountConnectedUsersPerAP();
-        List<Map<String, Object>> response = new ArrayList<>();
+    @GetMapping("/count-current-connected-users-per-ap")
+    public ResponseEntity<List<Map<String, Object>>> getCountCurrentConnectedUsersPerAp() {
+        Map<String, Long> counts = monitoringService.getCountCurrentConnectedUsersPerAP();
 
-        currentConnectedUsersPerApCount.forEach((apMac, count) -> {
-            Map<String, Object> entry = new HashMap<>();
-            entry.put("apMacAddress", apMac);
-            entry.put("userCount", count);
-            response.add(entry);
-        });
+        List<Map<String, Object>> response = counts.entrySet().stream()
+            .map(entry -> {
+                Map<String, Object> map = new LinkedHashMap<>();
+                map.put("apMacAddress", entry.getKey());
+                map.put("userCount", entry.getValue());
+                return map;
+            })
+            .collect(Collectors.toList());
+
         return ResponseEntity.ok(response);
     }
 

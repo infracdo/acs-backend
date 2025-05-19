@@ -131,12 +131,12 @@ public class MonitoringController {
         List<String> connectedAPs = monitoringService.getCurrentConnectedAPs();
 
         Map<String, Object> response = new HashMap<>();
-        if (connectedAPs == null || connectedAPs.isEmpty()) {
-            response.put("status", "error");
-            response.put("message", "No currently connected access points found.");
-            response.put("data", null);
-            return ResponseEntity.status(404).body(response);
-        }
+        // if (connectedAPs == null || connectedAPs.isEmpty()) {
+        //     response.put("status", "error");
+        //     response.put("message", "No currently connected access points found.");
+        //     response.put("data", null);
+        //     return ResponseEntity.status(404).body(response);
+        // }
 
         response.put("status", "success");
         response.put("message", "Currently connected access points retrieved successfully.");

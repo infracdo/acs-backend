@@ -20,13 +20,13 @@ public class MonitoringService {
     private static final Logger log = LoggerFactory.getLogger(MonitoringService.class);
 
     private final AccTransactionsRepository accTransactionsRepository;
-    private final AccSessionsRepository accSessionsRepository;
+    // private final AccSessionsRepository accSessionsRepository;
 
     public MonitoringService(AccTransactionsRepository accTransactionsRepository,
                             AccSessionsRepository accSessionsRepository) {
         
         this.accTransactionsRepository = accTransactionsRepository;
-        this.accSessionsRepository = accSessionsRepository;
+        // this.accSessionsRepository = accSessionsRepository;
     }
 
     // Return current number of connected users

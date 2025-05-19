@@ -1,7 +1,7 @@
 package com.acs_tr069.test_tr069.zeep.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
+// import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import com.acs_tr069.test_tr069.zeep.entity.AccSessions;

@@ -1105,7 +1105,7 @@ public class testController {
             e.printStackTrace();
         }
 
-        // System.out.println("Json: " + object.toString());
+        System.out.println("Json: " + object.toString());
 
         device_model_parameters model_param = null;
         try {

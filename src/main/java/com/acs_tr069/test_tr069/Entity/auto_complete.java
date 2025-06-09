@@ -6,7 +6,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
 @Entity
-public class auto_complete {
+public class auto_complete { // same with zeep ver, will retain
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
 

@@ -6,7 +6,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
 @Entity
-public class webcli_response_log {
+public class webcli_response_log { // superior to zeep ver, will retain
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
 
@@ -14,7 +14,7 @@ public class webcli_response_log {
     private String device_sn;
     private byte[] CommandOutput;
     private byte[] CommandUsed;
-    private java.sql.Timestamp time_saved;
+    private java.sql.Timestamp time_saved; // found in hive not in zeep
     
     public Long get_Id(){
         return id;
@@ -28,7 +28,7 @@ public class webcli_response_log {
     public byte[] get_CommandUsed(){
         return CommandUsed;
     }
-    public java.sql.Timestamp get_time_saved(){
+    public java.sql.Timestamp get_time_saved(){ // found in hive not in zeep
         return time_saved;
     }
 
@@ -41,7 +41,7 @@ public class webcli_response_log {
     public void set_CommandUsed(byte[] CommandUsed){
         this.CommandUsed = CommandUsed;
     }
-    public void set_time_saved(java.sql.Timestamp time_saved){
+    public void set_time_saved(java.sql.Timestamp time_saved){ // found in hive not in zeep
         this.time_saved = time_saved;
     }
 

@@ -1,6 +1,5 @@
 package com.acs_tr069.test_tr069.Entity;
 
-import java.sql.Date;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -10,7 +9,7 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "\"groups\"")
-public class groups {
+public class groups { // superior to zeep ver, will retain
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;

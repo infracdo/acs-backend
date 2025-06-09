@@ -10,9 +10,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
 
 import com.acs_tr069.test_tr069.CWMPResponses.tr069Response;
-import com.acs_tr069.test_tr069.Entity.devices;
+import com.acs_tr069.test_tr069.Entity.hive_devices;
 import com.acs_tr069.test_tr069.Entity.taskhandler;
-import com.acs_tr069.test_tr069.Repo.devicesRepository;
+import com.acs_tr069.test_tr069.Repo.hiveDevicesRepository;
 import com.acs_tr069.test_tr069.Repo.taskhandlerRepo;
 import com.acs_tr069.test_tr069.UDP.udp_sender;
 
@@ -26,7 +26,7 @@ public class tr069TaskHandlerService {
     private taskhandlerRepo taskhandlerRepo;
 
     @Autowired
-    private devicesRepository devicesRepo;
+    private hiveDevicesRepository hiveDevicesRepo;
 
     private String Tr069ResponseHandler(String Method, String Parameters, String Option){
         
@@ -84,7 +84,7 @@ public class tr069TaskHandlerService {
         newTasK.set_parameters(Parameters);
         newTasK.set_optional(Optional);
         taskhandlerRepo.save(newTasK);
-        devices current_device = devicesRepo.gEntityBySerialnum(SN);
+        hive_devices current_device = hiveDevicesRepo.gEntityBySerialnum(SN);
         if(current_device.getcwmp_cycle_end()){
             if(!current_device.getmanufacturer().equals("HGU")){
                 try {
@@ -112,7 +112,7 @@ public class tr069TaskHandlerService {
             long timeStampSeconds = instant.toEpochMilli();
 
             //String result = "";
-            devices current_device = devicesRepo.gEntityBySerialnum(SN);
+            hive_devices current_device = hiveDevicesRepo.gEntityBySerialnum(SN);
             String udp_url = current_device.getudp_con_req_url();
             String[] device_udp_url = udp_url.split(":");
             String host = device_udp_url[0];

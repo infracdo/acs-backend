@@ -189,7 +189,7 @@ ALTER TABLE acsdb.device_traffic_daily OWNER TO apollo;
 -- Name: devices; Type: TABLE; Schema: acsdb; Owner: apollo
 --
 
-CREATE TABLE acsdb.devices (
+CREATE TABLE acsdb.hive_devices (
     id bigint NOT NULL,
     con_req_url character varying(255),
     cpu_usage character varying(255),
@@ -223,7 +223,7 @@ CREATE TABLE acsdb.devices (
 );
 
 
-ALTER TABLE acsdb.devices OWNER TO apollo;
+ALTER TABLE acsdb.hive_devices OWNER TO apollo;
 
 --
 -- Name: devices_seq; Type: TABLE; Schema: acsdb; Owner: apollo
@@ -424,7 +424,7 @@ ALTER TABLE public.device OWNER TO apollo;
 -- Name: devices; Type: TABLE; Schema: public; Owner: apollo
 --
 
-CREATE TABLE public.devices (
+CREATE TABLE public.hive_devices (
     id bigint NOT NULL,
     ap_mode character varying(255),
     con_req_url character varying(255),
@@ -450,7 +450,7 @@ CREATE TABLE public.devices (
 );
 
 
-ALTER TABLE public.devices OWNER TO apollo;
+ALTER TABLE public.hive_devices OWNER TO apollo;
 
 --
 -- Name: group_command; Type: TABLE; Schema: public; Owner: apollo
@@ -636,7 +636,7 @@ ALTER TABLE ONLY acsdb.device_traffic_daily
 -- Name: devices idx_16424_primary; Type: CONSTRAINT; Schema: acsdb; Owner: apollo
 --
 
-ALTER TABLE ONLY acsdb.devices
+ALTER TABLE ONLY acsdb.hive_devices
     ADD CONSTRAINT idx_16424_primary PRIMARY KEY (id);
 
 
@@ -724,7 +724,7 @@ ALTER TABLE ONLY public.device
 -- Name: devices devices_pkey; Type: CONSTRAINT; Schema: public; Owner: apollo
 --
 
-ALTER TABLE ONLY public.devices
+ALTER TABLE ONLY public.hive_devices
     ADD CONSTRAINT devices_pkey PRIMARY KEY (id);
 
 

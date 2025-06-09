@@ -9,7 +9,7 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface auto_completeRepository extends CrudRepository<auto_complete, Long> {
+public interface auto_completeRepository extends CrudRepository<auto_complete, Long> {  // same with zeep ver, will retain
     @Query("SELECT d FROM auto_complete d WHERE d.device_model=?1")
     List<auto_complete> findByDeviceModel(String device_model);
 }

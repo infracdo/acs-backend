@@ -8,8 +8,8 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "group_ssid")
-public class group_ssid {
+@Table(name = "group_ssid")  
+public class group_ssid { // same with zeep ver, will retain
     
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)

@@ -8,7 +8,7 @@ import javax.persistence.Column;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "device")
+@Table(name = "device") // superior to zeep ver, will retain
 public class device {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -35,7 +35,7 @@ public class device {
 	@Column(name = "date_modified")
     private String date_modified;
 
-    @Column(name = "wan_ip")
+    @Column(name = "wan_ip") // found in hive not in zeep
     private String wan_ip;
 
     @Column(name = "date_offline")
@@ -54,13 +54,13 @@ public class device {
     private String device_type;
 
 
-    @Column(name = "second_wan_mac_address")
+    @Column(name = "second_wan_mac_address") // found in hive not in zeep 
     private String second_wan_mac;
     
-    public String getSecond_wan_mac() {
+    public String getSecond_wan_mac() { // found in hive not in zeep 
         return second_wan_mac;
     }
-    public void setSecond_wan_mac(String second_wan_mac) {
+    public void setSecond_wan_mac(String second_wan_mac) { // found in hive not in zeep 
         this.second_wan_mac = second_wan_mac;
     }
 

@@ -9,7 +9,7 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface taskhandlerRepo extends CrudRepository<taskhandler, Long> {
+public interface taskhandlerRepo extends CrudRepository<taskhandler, Long> { // same with zeep ver, will retain
     @Query("SELECT d FROM taskhandler d WHERE d.serial_num=?1")
     List<taskhandler> findBySerialNumEquals(String serial_num);
 

@@ -9,7 +9,7 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface webcli_response_logRepo extends CrudRepository<webcli_response_log, Long> {
+public interface webcli_response_logRepo extends CrudRepository<webcli_response_log, Long> { // same with zeep ver, will retain
     @Query("SELECT d FROM webcli_response_log d WHERE d.device_sn=?1")
     List<webcli_response_log> findBySerialNumEquals(String device_sn);
 

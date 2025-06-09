@@ -78,10 +78,10 @@ UNLOCK TABLES;
 -- Table structure for table `devices`
 --
 
-DROP TABLE IF EXISTS `devices`;
+DROP TABLE IF EXISTS `hive_devices`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `devices` (
+CREATE TABLE `hive_devices` (
   `id` int(6) unsigned NOT NULL AUTO_INCREMENT,
   `serial_num` text,
   `model` text,
@@ -109,7 +109,7 @@ CREATE TABLE `devices` (
 -- Dumping data for table `devices`
 --
 
-LOCK TABLES `devices` WRITE;
+LOCK TABLES `hive_devices` WRITE;
 /*!40000 ALTER TABLE `devices` DISABLE KEYS */;
 /*!40000 ALTER TABLE `devices` ENABLE KEYS */;
 UNLOCK TABLES;

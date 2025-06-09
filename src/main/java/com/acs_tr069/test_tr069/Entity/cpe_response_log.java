@@ -6,7 +6,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
 @Entity
-public class cpe_response_log {
+public class cpe_response_log { // same with zeep ver, will retain
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
 

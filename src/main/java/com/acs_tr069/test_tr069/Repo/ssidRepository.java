@@ -6,7 +6,7 @@ import com.acs_tr069.test_tr069.Entity.group_ssid;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 
-public interface ssidRepository extends CrudRepository<group_ssid, Long> {
+public interface ssidRepository extends CrudRepository<group_ssid, Long> { // same with zeep ver, will retain
     List<group_ssid> findByssid(String ssid);
     
     @Query("SELECT d FROM group_ssid d WHERE d.parent=?1")

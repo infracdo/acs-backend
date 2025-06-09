@@ -10,10 +10,10 @@ RUN mvn dependency:go-offline -B
 COPY ./src ./src
 
 # Create logs directory in the container
-RUN mkdir -p /app/logs
+#RUN mkdir -p /app/logs
 
 # Set proper permissions if necessary
-RUN chmod 755 /app/logs
+#RUN chmod 755 /app/logs
 
 # Run Maven to build the project and create the WAR file
 RUN mvn clean package -DskipTests

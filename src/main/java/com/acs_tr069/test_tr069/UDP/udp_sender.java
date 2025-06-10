@@ -14,7 +14,7 @@ public class udp_sender {
     private byte[] buf;
 
     public udp_sender() throws SocketException, UnknownHostException{
-        socket = new DatagramSocket(3478);
+        socket = new DatagramSocket(3478); // different in zeep ver, port not specified
     }
 
     public void sendConnectionRequest(String host, Integer portnum, String msg) throws IOException{

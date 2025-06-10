@@ -1,26 +1,15 @@
 package com.acs_tr069.test_tr069.Controller;
 
-import java.io.BufferedReader;
-import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
-import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.SocketException;
 import java.net.URL;
 import java.net.UnknownHostException;
-import java.nio.charset.Charset;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Set;
-import java.util.Optional;
 import java.util.Random;
 
 import javax.servlet.http.HttpServletRequest;
@@ -37,16 +26,11 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.async.DeferredResult;
-import org.yaml.snakeyaml.events.Event.ID;
 
 import com.acs_tr069.test_tr069.CWMPResponses.tr069Response;
 import com.acs_tr069.test_tr069.CWMPResponses.GetSoapFromString;
@@ -58,7 +42,6 @@ import com.acs_tr069.test_tr069.Entity.group_command;
 import com.acs_tr069.test_tr069.Entity.auto_complete;
 import com.acs_tr069.test_tr069.Entity.cpe_response_log;
 import com.acs_tr069.test_tr069.Entity.group_ssid;
-import com.acs_tr069.test_tr069.Entity.groups;
 import com.acs_tr069.test_tr069.Entity.device;
 
 import com.acs_tr069.test_tr069.Repo.httplogreqRepo;
@@ -74,13 +57,12 @@ import com.acs_tr069.test_tr069.Repo.device_frontendRepository;
 
 import com.acs_tr069.test_tr069.StoreRequestResult.GetResponseResult;
 import com.acs_tr069.test_tr069.UDP.udp_sender;
-import com.acs_tr069.test_tr069.UDP.udp_server;
 import com.acs_tr069.test_tr069.ZabbixApi.ZabbixApiRPCCalls;
 import com.google.common.base.Charsets;
 import com.acs_tr069.test_tr069.CWMPResponses.RandomCodeGen;
 
 @CrossOrigin(origins = "*")
-@RequestMapping(path = "/zeep/")
+@RequestMapping(path = "/api/zeep/")
 public class zeepController {
 
     @Autowired
@@ -100,8 +82,6 @@ public class zeepController {
     @Autowired
     private group_commandRepo GroupCommandRepo;
     @Autowired
-    private groupsRepository group_repo;
-    @Autowired
     private auto_completeRepository auto_completeRepo;
 
     String cwmpheader = null;
@@ -114,12 +94,10 @@ public class zeepController {
     private RandomCodeGen randomGen;
     private ZabbixApiRPCCalls zabbixRPC;
 
-    // TODO; CREATE SEPARATE METHOD FOR ZEEP
     @PostMapping(value = "/")
     public DeferredResult<ResponseEntity<String>> TestDevice(@RequestBody(required = false) String xmlPayload,
             HttpServletRequest request, HttpServletResponse response) {
         System.out.println(xmlPayload);
-        //System.out.println("Start: " + LocalTime.now());
         DeferredResult<ResponseEntity<String>> result = new DeferredResult<>();
         String DeviceSerialNum = null;
         if (xmlPayload != null) {
@@ -129,7 +107,6 @@ public class zeepController {
                 try {
                     convertB = getSoap.StringToSAOP(xmlPayload).getSOAPBody();
                 } catch (SOAPException e) {
-                    // TODO Auto-generated catch block
                     e.printStackTrace();
                 }
                 DeviceSerialNum = convertB.getElementsByTagName("SerialNumber").item(0).getTextContent();
@@ -140,9 +117,7 @@ public class zeepController {
             DeviceSerialNum = GetDeviceSerialNum(request);
         }
         //System.out.println("DeviceThatRequest" + DeviceSerialNum);
-
         new Thread(() -> {
-
             // //System.out.println("Execute method asynchronously - " +
             // Thread.currentThread().getName());
             String responsebody = null;
@@ -156,7 +131,6 @@ public class zeepController {
                     converteBody = getSoap.StringToSAOP(xmlPayload).getSOAPBody();
                     getResponsetype = converteBody.getChildNodes().item(0).getLocalName();
                 } catch (SOAPException e) {
-                    // TODO Auto-generated catch block
                     e.printStackTrace();
                 }
                 System.out.println("ResponseType: "+ getResponsetype);
@@ -177,7 +151,6 @@ public class zeepController {
                         try {
                             UpdateDevicesTable(xmlPayload);
                         } catch (JSONException e) {
-                            // TODO Auto-generated catch block
                             e.printStackTrace();
                         }
                         result.setResult(ResponseEntity.status(HttpStatus.NO_CONTENT).contentType(MediaType.TEXT_XML)
@@ -192,7 +165,6 @@ public class zeepController {
                 //System.out.println(GetResponseResult.getResult(converteBody, getResponsetype));
 
                 if (xmlPayload.contains("<cwmp:X_RUIJIE_COM_CN_ExecuteCliCommandResponse>")) {
-
                     String DeviceSN = GetDeviceSerialNum(request);
                     String CommandUsed = converteBody.getElementsByTagName("Command").item(0).getTextContent();
                     String WebCliContent = GetResponseResult.getResult(converteBody, "X_RUIJIE_COM_CN_ExecuteCliCommandResponse");
@@ -253,8 +225,7 @@ public class zeepController {
 
                             //System.out.println("End: " + LocalTime.now());
 
-                            result.setResult(ResponseEntity.status(HttpStatus.NO_CONTENT)
-                                    .contentType(MediaType.TEXT_XML).body(" "));
+                            result.setResult(ResponseEntity.status(HttpStatus.NO_CONTENT).contentType(MediaType.TEXT_XML).body(" "));
                         }
                     }
                 } else {
@@ -272,7 +243,6 @@ public class zeepController {
                 try {
                     SendUDPRequest(DeviceSN);
                 } catch (IOException e) {
-                    // TODO Auto-generated catch block
                     e.printStackTrace();
                     System.out.println(e);
                 }
@@ -280,7 +250,6 @@ public class zeepController {
             }
 
             //System.out.println("End: " + LocalTime.now());
-
             
         }, "MyThread for " + DeviceSerialNum).start();
 
@@ -299,7 +268,6 @@ public class zeepController {
         }, "logging " + serial_num).start();
     }
 
-    // TODO; CREATE SEPARATE METHOD FOR ZEEP
     public void CheckDeviceEventCode(String Payload) {
         //System.out.println(LocalTime.now() + "Current Thread: " + Thread.currentThread().getName());
         new Thread(() -> {
@@ -309,14 +277,12 @@ public class zeepController {
             try {
                 UpdateDeviceDetail(Payload);
             } catch (JSONException e1) {
-                // TODO Auto-generated catch block
                 e1.printStackTrace();
             }
 
             try {
                 soapBody = getSoap.StringToSAOP(Payload).getSOAPBody();
             } catch (SOAPException e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             }
             NumEvent = soapBody.getElementsByTagName("Event").item(0).getChildNodes().getLength();
@@ -357,7 +323,6 @@ public class zeepController {
                         try {
                             UpdateDevicesTable(Payload);
                         } catch (JSONException e) {
-                            // TODO Auto-generated catch block
                             e.printStackTrace();
                         }
                         String ObjectName = "{,Command:macc nat-config vlan 233 network 10.233.2.0 255.255.255.0,Command:interface BVI 233,Command:ip address 10.233.2.1 255.255.255.0,Command:ip nat inside,Command:end,Command:write,}";
@@ -379,7 +344,6 @@ public class zeepController {
                     try {
                         UpdateDevicesTable(Payload);
                     } catch (JSONException e) {
-                        // TODO Auto-generated catch block
                         e.printStackTrace();
                     }
                     /*
@@ -392,10 +356,8 @@ public class zeepController {
         }, "CheckEvent").start();
     }
 
-    // TODO; CREATE SEPARATE METHOD FOR ZEEP
-    public void Bootstraping(String serial_num) {
+    public void Bootstraping(String serial_num) { // search and destroy accesspoint objects
         new Thread(() -> {
-            // search and destroy accesspoint objects
             //System.out.println("Starting Delete AP process: " + serial_num);
             SaveTask(serial_num, "GetParameterNames", "Device.WiFi.AccessPoint.", "null");
             SaveTask(serial_num, "GetParameterValues", "Device.WiFi.AccessPoint.", "null");
@@ -414,10 +376,7 @@ public class zeepController {
                         break;
                     }
                 }
-
-                /*
-                 * if(num_ap>=0){ break; }
-                 */
+                // if(num_ap>=0){ break; }
             }
             if (num_ap > 0) {
                 DeleteMultipleObjects(serial_num, apTobeDelete, num_ap);
@@ -505,30 +464,10 @@ public class zeepController {
     }
 
     private String GetNumberOfParameters(String serial_num, String Method) {
-        // List<cpe_response_log> cpe_response =
-        // cpe_response_repo.findBySerialNumEquals(serial_num);
-        // Integer NumOfResponses = cpe_response.size();
-        /*
-         * for(int i=0; i<NumOfResponses;i++){ cpe_response_log current_response =
-         * cpe_response.get(i); if(current_response.get_method().contains(Method)){
-         * SOAPBody soapBody = null; try { soapBody =
-         * getSoap.StringToSAOP(current_response.get_payload()).getSOAPBody(); } catch
-         * (SOAPException e) { // TODO Auto-generated catch block e.printStackTrace(); }
-         * Integer numOfParam =
-         * soapBody.getElementsByTagName("ParameterList").item(0).getChildNodes().
-         * getLength();
-         * //System.out.println(soapBody.getElementsByTagName("ParameterList").item(0).
-         * getChildNodes().item(i).getChildNodes().item(0).getTextContent());
-         * StringBuilder result = new StringBuilder(); for(int j=0;j<numOfParam;j++){
-         * result.append(soapBody.getElementsByTagName("ParameterList").item(0).
-         * getChildNodes().item(j).getChildNodes().item(0).getTextContent()+","); }
-         * cpe_response_repo.delete(current_response); return result.toString(); } }
-         */
         cpe_response_log cpe_response = null;
         try {
             cpe_response = cpe_response_repo.getBySerialNumEquals(serial_num);
         } catch (Exception e) {
-            //TODO: handle exception
             cpe_response = null;
         }
         //System.out.println(cpe_response);
@@ -540,7 +479,6 @@ public class zeepController {
                 try {
                     soapBody = getSoap.StringToSAOP(cpe_response.get_payload()).getSOAPBody();
                 } catch (SOAPException e) {
-                    // TODO Auto-generated catch block
                     e.printStackTrace();
                 }
                 Integer numOfParam = soapBody.getElementsByTagName("ParameterList").item(0).getChildNodes().getLength();
@@ -550,8 +488,7 @@ public class zeepController {
                     //System.out.println(soapBody.getElementsByTagName("ParameterList").item(0).getChildNodes().item(0).getChildNodes().item(0).getTextContent());
                     StringBuilder result = new StringBuilder();
                     for (int j = 0; j < numOfParam; j++) {
-                        result.append(soapBody.getElementsByTagName("ParameterList").item(0).getChildNodes().item(j)
-                                .getChildNodes().item(0).getTextContent() + ",");
+                        result.append(soapBody.getElementsByTagName("ParameterList").item(0).getChildNodes().item(j).getChildNodes().item(0).getTextContent() + ",");
                     }
                     cpe_response_repo.delete(cpe_response);
                     return result.toString();
@@ -631,7 +568,6 @@ public class zeepController {
         }
     }
 
-    // TODO; CREATE SEPARATE METHOD FOR ZEEP
     private void ApplyOldCommand(String serial_num, String device_group) {
         List<group_command> CommandsInGroup = GroupCommandRepo.findByParent(device_group);
         zeep_devices currentDevice = zeepDevicesRepo.gEntityBySerialnum(serial_num);
@@ -673,7 +609,6 @@ public class zeepController {
         return DeviceSN;
     }
 
-    // TODO; CREATE SEPARATE METHOD FOR ZEEP
     @Scheduled(fixedRate = 60000)
     private void ZabbixAPI_Test() throws IOException, JSONException {
         /*
@@ -686,17 +621,14 @@ public class zeepController {
             try {
                 zabbix_url = new URL("http://zabbix.apolloglobal.net/zabbix/api_jsonrpc.php");
             } catch (MalformedURLException e2) {
-                // TODO Auto-generated catch block
                 e2.printStackTrace();
             }
             String auth = null;
             try {
                 auth = zabbixRPC.Authentication(zabbix_url);
             } catch (IOException e2) {
-                // TODO Auto-generated catch block
                 e2.printStackTrace();
             } catch (JSONException e2) {
-                // TODO Auto-generated catch block
                 e2.printStackTrace();
             }
     
@@ -708,10 +640,8 @@ public class zeepController {
                 try {
                     hostid = zabbixRPC.GetSpecificHost(device_name, auth, zabbix_url);
                 } catch (IOException e2) {
-                    // TODO Auto-generated catch block
                     e2.printStackTrace();
                 } catch (JSONException e2) {
-                    // TODO Auto-generated catch block
                     e2.printStackTrace();
                 }
                 System.out.println(hostid);
@@ -723,10 +653,8 @@ public class zeepController {
                             try {
                                 items = zabbixRPC.GetItems(hostid, auth, zabbix_url);
                             } catch (IOException e1) {
-                                // TODO Auto-generated catch block
                                 e1.printStackTrace();
                             } catch (JSONException e1) {
-                                // TODO Auto-generated catch block
                                 e1.printStackTrace();
                             }
                             StringBuilder ItemsInHost = new StringBuilder();
@@ -736,14 +664,12 @@ public class zeepController {
                                     try {
                                         current_item = items.getJSONObject(i);
                                     } catch (JSONException e) {
-                                        // TODO Auto-generated catch block
                                         e.printStackTrace();
                                     }
                                     String itemkey = "null";
                                     try {
                                         itemkey = current_item.get("key_").toString();
                                     } catch (JSONException e) {
-                                        // TODO Auto-generated catch block
                                         e.printStackTrace();
                                     }
                                     ItemsInHost.append( itemkey + ";");
@@ -752,17 +678,14 @@ public class zeepController {
                                     try {
                                         zabbixRPC.UpdateItem(device_name, "device.status", device.getstatus());
                                     } catch (IOException e) {
-                                        // TODO Auto-generated catch block
                                         e.printStackTrace();
                                     }
                                 }else{
                                     try {
                                         zabbixRPC.CreateItem(hostid, "DeviceStatus", "device.status", auth, zabbix_url);
                                     } catch (IOException e) {
-                                        // TODO Auto-generated catch block
                                         e.printStackTrace();
                                     } catch (JSONException e) {
-                                        // TODO Auto-generated catch block
                                         e.printStackTrace();
                                     }
                                 }
@@ -770,10 +693,8 @@ public class zeepController {
                                 try {
                                     zabbixRPC.CreateItem(hostid, "DeviceStatus", "device.status", auth, zabbix_url);
                                 } catch (IOException e) {
-                                    // TODO Auto-generated catch block
                                     e.printStackTrace();
                                 } catch (JSONException e) {
-                                    // TODO Auto-generated catch block
                                     e.printStackTrace();
                                 }
                             }
@@ -782,10 +703,8 @@ public class zeepController {
                             try {
                                 zabbixRPC.CreateZabbixHost(zabbix_url, device_name, "202.60.10.89", group_id, auth);
                             } catch (IOException e) {
-                                // TODO Auto-generated catch block
                                 e.printStackTrace();
                             } catch (JSONException e) {
-                                // TODO Auto-generated catch block
                                 e.printStackTrace();
                             }
                         }
@@ -805,10 +724,8 @@ public class zeepController {
                                 try {
                                     items = zabbixRPC.GetItems(hostid, auth, zabbix_url);
                                 } catch (IOException e1) {
-                                    // TODO Auto-generated catch block
                                     e1.printStackTrace();
                                 } catch (JSONException e1) {
-                                    // TODO Auto-generated catch block
                                     e1.printStackTrace();
                                 }
                                 StringBuilder ItemsInHost = new StringBuilder();
@@ -818,14 +735,12 @@ public class zeepController {
                                         try {
                                             current_item = items.getJSONObject(i);
                                         } catch (JSONException e) {
-                                            // TODO Auto-generated catch block
                                             e.printStackTrace();
                                         }
                                         String itemkey = "null";
                                         try {
                                             itemkey = current_item.get("key_").toString();
                                         } catch (JSONException e) {
-                                            // TODO Auto-generated catch block
                                             e.printStackTrace();
                                         }
                                         ItemsInHost.append( itemkey + ";");
@@ -834,17 +749,14 @@ public class zeepController {
                                         try {
                                             zabbixRPC.UpdateItem(device_name, "device.status", device.getstatus());
                                         } catch (IOException e) {
-                                            // TODO Auto-generated catch block
                                             e.printStackTrace();
                                         }
                                     }else{
                                         try {
                                             zabbixRPC.CreateItem(hostid, "DeviceStatus", "device.status", auth, zabbix_url);
                                         } catch (IOException e) {
-                                            // TODO Auto-generated catch block
                                             e.printStackTrace();
                                         } catch (JSONException e) {
-                                            // TODO Auto-generated catch block
                                             e.printStackTrace();
                                         }
                                     }
@@ -852,10 +764,8 @@ public class zeepController {
                                     try {
                                         zabbixRPC.CreateItem(hostid, "DeviceStatus", "device.status", auth, zabbix_url);
                                     } catch (IOException e) {
-                                        // TODO Auto-generated catch block
                                         e.printStackTrace();
                                     } catch (JSONException e) {
-                                        // TODO Auto-generated catch block
                                         e.printStackTrace();
                                     }
                                 }
@@ -864,10 +774,8 @@ public class zeepController {
                                 try {
                                     zabbixRPC.CreateZabbixHost(zabbix_url, device_name, "202.60.10.89", group_id, auth);
                                 } catch (IOException e) {
-                                    // TODO Auto-generated catch block
                                     e.printStackTrace();
                                 } catch (JSONException e) {
-                                    // TODO Auto-generated catch block
                                     e.printStackTrace();
                                 }
                             }
@@ -881,10 +789,8 @@ public class zeepController {
                                     try {
                                         items = zabbixRPC.GetItems(hostid, auth, zabbix_url);
                                     } catch (IOException e1) {
-                                        // TODO Auto-generated catch block
                                         e1.printStackTrace();
                                     } catch (JSONException e1) {
-                                        // TODO Auto-generated catch block
                                         e1.printStackTrace();
                                     }
                                     StringBuilder ItemsInHost = new StringBuilder();
@@ -894,14 +800,12 @@ public class zeepController {
                                             try {
                                                 current_item = items.getJSONObject(i);
                                             } catch (JSONException e) {
-                                                // TODO Auto-generated catch block
                                                 e.printStackTrace();
                                             }
                                             String itemkey = "null";
                                             try {
                                                 itemkey = current_item.get("key_").toString();
                                             } catch (JSONException e) {
-                                                // TODO Auto-generated catch block
                                                 e.printStackTrace();
                                             }
                                             ItemsInHost.append( itemkey + ";");
@@ -910,17 +814,14 @@ public class zeepController {
                                             try {
                                                 zabbixRPC.UpdateItem(device_name, "device.status", device.getstatus());
                                             } catch (IOException e) {
-                                                // TODO Auto-generated catch block
                                                 e.printStackTrace();
                                             }
                                         }else{
                                             try {
                                                 zabbixRPC.CreateItem(hostid, "DeviceStatus", "device.status", auth, zabbix_url);
                                             } catch (IOException e) {
-                                                // TODO Auto-generated catch block
                                                 e.printStackTrace();
                                             } catch (JSONException e) {
-                                                // TODO Auto-generated catch block
                                                 e.printStackTrace();
                                             }
                                         }
@@ -928,10 +829,8 @@ public class zeepController {
                                         try {
                                             zabbixRPC.CreateItem(hostid, "DeviceStatus", "device.status", auth, zabbix_url);
                                         } catch (IOException e) {
-                                            // TODO Auto-generated catch block
                                             e.printStackTrace();
                                         } catch (JSONException e) {
-                                            // TODO Auto-generated catch block
                                             e.printStackTrace();
                                         }
                                     }
@@ -940,10 +839,8 @@ public class zeepController {
                                     try {
                                         zabbixRPC.CreateZabbixHost(zabbix_url, device_name, "202.60.10.89", group_id, auth);
                                     } catch (IOException e) {
-                                        // TODO Auto-generated catch block
                                         e.printStackTrace();
                                     } catch (JSONException e) {
-                                        // TODO Auto-generated catch block
                                         e.printStackTrace();
                                     }
                                 }
@@ -955,32 +852,8 @@ public class zeepController {
                 }   
             }
         }).start();
-
-        
-        
-
-        //zabbixRPC.UpdateItem("ACS_ZabbixAPI_Test", "create_item_test", "Testingsszzas");
-        //message = "{\"jsonrpc\": \"2.0\",\"method\": \"host.get\",\"params\": {\"output\": [\"hostid\",\"host\",\"tags\",\"macros\"],\"selectInterfaces\": [\"interfaceid\",\"ip\"]},\"id\": 2,\"auth\": \""+auth+"\"}";
-        //message = "{\"jsonrpc\": \"2.0\",\"method\": \"item.get\",\"params\": {\"output\": [[\"itemid\", \"name\", \"key_\"]]},\"id\": 1,\"auth\": \""+auth+"\"}";
-        //message = "{\"jsonrpc\": \"2.0\",\"method\": \"item.update\",\"params\": {\"itemid\": \"567105\",\"lastvalue\": test},\"auth\": \""+auth+"\",\"id\": 5}";
-        //message = "{\"jsonrpc\": \"2.0\",\"method\": \"item.get\",\"params\": {\"output\": [\"itemid\", \"name\", \"key_\",\"lastvalue\",\"interface\"],\"selectPreprocessing\": \"extend\",\"hostids\": \"27053\"},\"auth\": \""+auth+"\",\"id\": 1}";
-        //message = "{\"jsonrpc\": \"2.0\",\"method\": \"item.get\",\"params\": {\"output\": \"extend\",\"hostids\": \"27044\",\"search\": {\"key_\": \"devicesstatus\"},\"sortfield\": \"name\"},\"auth\": \""+auth+"\",\"id\": 1}";
- 
-        //message = "{\"jsonrpc\": \"2.0\",\"method\": \"item.get\",\"params\": {\"output\": \"extend\",\"hostids\": \"27053\"},\"search\": {\"key_\": \"test\"},\"sortfield\": \"name\"},\"auth\": \""+auth+"\",\"id\": 1}";
-        
-        //Get items
-        //String message = "{\"jsonrpc\": \"2.0\",\"method\": \"item.get\",\"params\": {\"output\": \"extend\",\"hostids\": \"27053\",\"search\": {\"key_\": \"\"},\"sortfield\": \"name\"},\"auth\": \""+auth+"\",\"id\": 1}";
-
-        //zabbixRPC.Testing(message, auth, zabbix_url);
-        //message = "{\"jsonrpc\": \"2.0\",\"request\":\"sender data\",\"data\":[{\"host\":\"ACS_ZabbixAPI_Test\",\"key\":\"trapper\",\"value\":\"test value\"}],\"auth\": \""+auth+"\",\"id\": 1}";
-        //message = "{\"jsonrpc\": \"2.0\",\"method\": \"host.get\",\"params\": {\"filter\":{\"host\":\"ACS_ZabbixAPI_Test\"}},\"id\": 2,\"auth\": \""+auth+"\"}";
-        
-        //GetZabbixHost(message, zabbix_url);
-
-        //UpdateItem();
     }
 
-    // TODO; CREATE SEPARATE METHOD FOR ZEEP
     @Scheduled(fixedRate = 60000)
     private void DeviceStatusUpdate(){
         /*
@@ -1000,7 +873,6 @@ public class zeepController {
                 timeInterval = currentTime.getTime() - httprequestlog.get_lastRequest().getTime();    
             } catch (Exception e) {
                 timeInterval = (long) (60000*5);
-                //TODO: handle exception
             }
             
             interval = timeInterval/60000;
@@ -1058,14 +930,13 @@ public class zeepController {
         }
     }
 
-    // TODO; CREATE SEPARATE METHOD FOR ZEEP
     private void UpdateDeviceDetail(String Payload) throws JSONException{
         SOAPBody InformData = null;
         Integer NumData = 0;
         try {
             InformData = getSoap.StringToSAOP(Payload).getSOAPBody();
         } catch (Exception e) {
-            //TODO: handle exception
+            e.printStackTrace();
         }
         NumData = InformData.getElementsByTagName("ParameterList").item(0).getChildNodes().getLength();
         StringBuilder sb = new StringBuilder();
@@ -1100,7 +971,6 @@ public class zeepController {
         }
     }
 
-    // TODO; CREATE SEPARATE METHOD FOR ZEEP
     public void UpdateDevicesTable(String Payload) throws JSONException {
         //DevicesGet
         /*
@@ -1116,7 +986,7 @@ public class zeepController {
         try {
             InformData = getSoap.StringToSAOP(Payload).getSOAPBody();
         } catch (Exception e) {
-            //TODO: handle exception
+            e.printStackTrace();
         }
         NumData = InformData.getElementsByTagName("ParameterList").item(0).getChildNodes().getLength();
         StringBuilder sb = new StringBuilder();
@@ -1132,7 +1002,6 @@ public class zeepController {
 
         //System.out.println("Json Length: " + object.length());
         //System.out.println("Try JsonFind: " +object.get("Device.DeviceInfo.SoftwareVersion").toString());
-        
 
         if(device_front.findBySerialNum(InformData.getElementsByTagName("SerialNumber").item(0).getTextContent()).isEmpty()){
             device unassigned_device = new device();
@@ -1183,14 +1052,12 @@ public class zeepController {
 
     }
 
-    // TODO; CREATE SEPARATE METHOD FOR ZEEP
     public void SendUDPRequest(@PathVariable String SN) throws IOException{
         
         new Thread(()->{
             try {
                 Thread.sleep(1 * 1000);
             } catch (InterruptedException e2) {
-                // TODO Auto-generated catch block
                 e2.printStackTrace();
             }
 
@@ -1224,28 +1091,23 @@ public class zeepController {
                 try {
                     udpclient = new udp_sender();
                 } catch (SocketException e1) {
-                    // TODO Auto-generated catch block
                     e1.printStackTrace();
                 } catch (UnknownHostException e1) {
-                    // TODO Auto-generated catch block
                     e1.printStackTrace();
                 }
                 try {
                     udpclient.sendConnectionRequest(host, portnum, msg);
                 } catch (IOException e) {
-                    // TODO Auto-generated catch block
                     e.printStackTrace();
                     System.out.println(e);
                 }
                 udpclient.close();
             }
-            
         }).start();
         //result = host+":"+portnum;
         //return result;
     }
 
-    // TODO; CREATE SEPARATE METHOD FOR ZEEP
     public void SaveTask(String SN, String Method,String Parameters,String Optional){ 
         taskhandler newTasK = new taskhandler();
         newTasK.set_SN(SN);
@@ -1341,13 +1203,10 @@ public class zeepController {
         SaveTask(SerialNum, "Save", "None","None");
     }
 
-    // TODO; CREATE SEPARATE METHOD FOR ZEEP
     @RequestMapping(value="/CliAutoComplete/ {SerialNum}")
     public DeferredResult<ResponseEntity<String>> CliAutoComplete(@RequestBody String Modes,@PathVariable String SerialNum, HttpServletRequest request )
-            throws JSONException 
-    {  
+            throws JSONException {  
         //System.out.println("Modez: "+ Modes);
-        
         DeferredResult<ResponseEntity<String>> result = new DeferredResult<>();
         new Thread(() -> {
             String body = "";
@@ -1358,7 +1217,6 @@ public class zeepController {
             List<auto_complete> suggestion_lists = auto_completeRepo.findByDeviceModel(deviceModel);
             boolean found = false;
             if(!suggestion_lists.isEmpty()){
-                
                 for (auto_complete auto_complete : suggestion_lists) {
                     System.out.println("from db"+auto_complete.get_command());
                     System.out.println("from ObjName" + ObjectName);
@@ -1373,7 +1231,6 @@ public class zeepController {
                     try {
                         AddWebCLiTask(Modes, SerialNum, ObjectName);
                     } catch (JSONException e1) {
-                        // TODO Auto-generated catch block
                         e1.printStackTrace();
                     }
     
@@ -1382,7 +1239,6 @@ public class zeepController {
                         if(body!=null){
                             break;
                         }
-        
                     }
                     try {
                         auto_complete NewSuggestion = new auto_complete();
@@ -1392,7 +1248,6 @@ public class zeepController {
                         auto_completeRepo.save(NewSuggestion);
                     } catch (Exception e) {
                         System.out.println(e);
-                        //TODO: handle exception
                     }
                     
                     
@@ -1405,7 +1260,6 @@ public class zeepController {
                     try {
                         AddWebCLiTask(Modes, SerialNum, ObjectName);
                     } catch (JSONException e1) {
-                        // TODO Auto-generated catch block
                         e1.printStackTrace();
                     }
                     while(true){
@@ -1413,7 +1267,6 @@ public class zeepController {
                         if(body!=null){
                             break;
                         }
-        
                     }
                     try {
                         auto_complete NewSuggestion = new auto_complete();
@@ -1423,17 +1276,11 @@ public class zeepController {
                         auto_completeRepo.save(NewSuggestion);
                     } catch (Exception e) {
                         System.out.println(e);
-                        //TODO: handle exception
                     }
-                    
-                    
                     //System.out.println("test--------" + body);
                     result.setResult( ResponseEntity.status(HttpStatus.OK).contentType(MediaType.TEXT_PLAIN).body(body));
                 }
-                
-                
             }
-            
         }, "MyThread for " ).start();
         return result;
     }
@@ -1465,9 +1312,7 @@ public class zeepController {
         if(webCliRepo.findBySerialNumEquals(SerialNum).isEmpty()){
             String Head = "web_cli \"exec\" \"0\" \"0\" \"0\" \"\" \"\" ";
             SaveTask(SerialNum, "WebCli", "{,\"Command\":"+Head+'"'+ObjectName+'"'+",}", "shell");
-            
         }else{
-
             String[] modez = Modes.split(",",-1);
             StringBuilder Head = new StringBuilder();
             Head.append("web_cli ");
@@ -1486,5 +1331,4 @@ public class zeepController {
         }
         System.out.println("Commited CLI Request: "+ new Timestamp(System.currentTimeMillis()));
     }
-
 }

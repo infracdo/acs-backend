@@ -1438,5 +1438,53 @@ public class zeepController {
         return result;
     }
 
-    
+    private String GetCLIOutput(String SerialNum, String ObjectName)
+    {
+        //String Byte2String = new String(webcli_byte, Charsets.UTF_8);
+        String Outputbody = null;
+        String CommandUsed = null;
+        List<webcli_response_log> cliOutput = webCliRepo.findBySerialNumEquals(SerialNum);
+        if(cliOutput!=null){
+            Integer NumOutput = cliOutput.size();
+            for(int i=0; i<NumOutput; i++){
+                webcli_response_log currentCheck = cliOutput.get(i);
+                CommandUsed = new String(currentCheck.get_CommandUsed(), Charsets.UTF_8);
+                if(CommandUsed.contains("\""+ObjectName+"\"")){
+                    Outputbody = new String(currentCheck.get_CommandOutput(), Charsets.UTF_8);                       
+                    webCliRepo.delete(webCliRepo.getByID(currentCheck.get_Id()));
+                    System.out.println("OutputBody: "+ new Timestamp(System.currentTimeMillis()));
+                    return Outputbody;
+                }
+            }
+        }
+        return Outputbody;
+    }
+
+    private void AddWebCLiTask(String Modes,String SerialNum,String ObjectName)throws JSONException
+    {
+        if(webCliRepo.findBySerialNumEquals(SerialNum).isEmpty()){
+            String Head = "web_cli \"exec\" \"0\" \"0\" \"0\" \"\" \"\" ";
+            SaveTask(SerialNum, "WebCli", "{,\"Command\":"+Head+'"'+ObjectName+'"'+",}", "shell");
+            
+        }else{
+
+            String[] modez = Modes.split(",",-1);
+            StringBuilder Head = new StringBuilder();
+            Head.append("web_cli ");
+            
+            //Head.append('"'+modez[0].replaceAll("[^a-zA-Z0-9]", "")+'"'+" ");
+            Head.append('"'+modez[1]+'"'+" ");
+            Head.append('"'+modez[2]+'"'+" ");
+            Head.append('"'+modez[3]+'"'+" ");
+            Head.append("\""+modez[4]+"\" ");
+            Head.append("\""+modez[5]+"\" ");
+            Head.append("\""+modez[6]+"\" ");
+            //webCliRepo.delete(webCliRepo.getByID(ResponseLog.get(ResponseLog.size()-1).get_Id()));
+            //System.out.println("HeadCLI: "+Head.toString());
+            //System.out.println("WebCLI: "+"{,\"Command\":"+Head.toString()+'"'+ObjectName+'"'+",}");
+            SaveTask(SerialNum, "WebCli", "{,\"Command\":"+Head.toString()+'"'+ObjectName+'"'+",}", "shell");            
+        }
+        System.out.println("Commited CLI Request: "+ new Timestamp(System.currentTimeMillis()));
+    }
+
 }

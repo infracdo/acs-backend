@@ -2327,10 +2327,10 @@ public class hiveController {
     }
 
     @Async("asyncExecutor")
-    @RequestMapping(value = "/CliAutoComplete/ {SerialNum}")
+    @RequestMapping(value = "/CliAutoComplete/ {SerialNum}") // TODO; different repo from zeep ver, will separate
     public CompletableFuture<DeferredResult<ResponseEntity<String>>> CliAutoComplete(@RequestBody String Modes,
             @PathVariable String SerialNum, HttpServletRequest request)
-            throws JSONException { // TODO; different repo from zeep ver, will separate
+            throws JSONException { 
         // System.out.println("Modez: "+ Modes);
 
         DeferredResult<ResponseEntity<String>> result = new DeferredResult<>();

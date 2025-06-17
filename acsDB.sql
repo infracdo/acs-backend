@@ -78,29 +78,40 @@ UNLOCK TABLES;
 -- Table structure for table `devices`
 --
 
-DROP TABLE IF EXISTS `hive_devices`;
+DROP TABLE IF EXISTS `devices`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `hive_devices` (
-  `id` int(6) unsigned NOT NULL AUTO_INCREMENT,
-  `serial_num` text,
-  `model` text,
-  `manufacturer` text,
-  `oui` text,
-  `hardware_ver` text,
-  `root_fs_ver` text,
-  `firmware_ver` text,
-  `ap_mode` text,
-  `mac_address` text,
-  `os_type` text,
-  `host_name` text,
-  `max_users` text,
-  `ip` text,
-  `last_reboot` text,
-  `last_boot` text,
-  `root_data_model` text,
-  `web_auth` text,
-  `group_path` text,
+CREATE TABLE `devices` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `serial_num` varchar(255) DEFAULT NULL,
+  `model` varchar(255) DEFAULT NULL,
+  `manufacturer` varchar(255) DEFAULT NULL,
+  `oui` varchar(255) DEFAULT NULL,
+  `hardware_ver` varchar(255) DEFAULT NULL,
+  `root_fs_ver` varchar(255) DEFAULT NULL,
+  `firmware_ver` varchar(255) DEFAULT NULL,
+  `ap_mode` varchar(255) DEFAULT NULL,
+  `mac_address` varchar(255) DEFAULT NULL,
+  `os_type` varchar(255) DEFAULT NULL,
+  `host_name` varchar(255) DEFAULT NULL,
+  `max_users` varchar(255) DEFAULT NULL,
+  `ip` varchar(255) DEFAULT NULL,
+  `last_reboot` varchar(255) DEFAULT NULL,
+  `last_boot` varchar(255) DEFAULT NULL,
+  `root_data_model` varchar(255) DEFAULT NULL,
+  `web_auth` varchar(255) DEFAULT NULL,
+  `group_path` varchar(255) DEFAULT NULL,
+  `udp_con_req_url` varchar(255) DEFAULT NULL,
+  `con_req_url` varchar(255) DEFAULT NULL,
+  `cpu_usage` varchar(255) DEFAULT NULL,
+  `cwmp_cycle_end` bit(1) DEFAULT NULL,
+  `device_alias` varchar(255) DEFAULT NULL,
+  `management_ip` varchar(255) DEFAULT NULL,
+  `memory_usage` varchar(255) DEFAULT NULL,
+  `public_ip` varchar(255) DEFAULT NULL,
+  `software_ver` varchar(255) DEFAULT NULL,
+  `ssids` varchar(255) DEFAULT NULL,
+  `second_wan_mac` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -109,7 +120,7 @@ CREATE TABLE `hive_devices` (
 -- Dumping data for table `devices`
 --
 
-LOCK TABLES `hive_devices` WRITE;
+LOCK TABLES `devices` WRITE;
 /*!40000 ALTER TABLE `devices` DISABLE KEYS */;
 /*!40000 ALTER TABLE `devices` ENABLE KEYS */;
 UNLOCK TABLES;

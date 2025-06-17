@@ -24,7 +24,6 @@ public class MonitoringService {
 
     public MonitoringService(AccTransactionsRepository accTransactionsRepository,
                             AccSessionsRepository accSessionsRepository) {
-        
         this.accTransactionsRepository = accTransactionsRepository;
         this.accSessionsRepository = accSessionsRepository;
     }

@@ -99,7 +99,7 @@ CREATE TABLE acsdb.device (
     status character varying(255),
     wan1_ip character varying(255),
     wan_ip character varying(255),
-    second_wan_mac_address character varying(255)
+    second_wan_mac character varying(255)
 );
 
 
@@ -189,41 +189,41 @@ ALTER TABLE acsdb.device_traffic_daily OWNER TO apollo;
 -- Name: devices; Type: TABLE; Schema: acsdb; Owner: apollo
 --
 
-CREATE TABLE acsdb.hive_devices (
+CREATE TABLE acsdb.devices (
     id bigint NOT NULL,
+    serial_num character varying(255),
+    model character varying(255),
+    manufacturer character varying(255),
+    oui character varying(255),
+    hardware_ver character varying(255),
+    root_fs_ver character varying(255),
+    firmware_ver character varying(255),
+    ap_mode character varying(255),
+    mac_address character varying(255),
+    os_type character varying(255),
+    host_name character varying(255),
+    max_users character varying(255),
+    ip character varying(255),
+    last_reboot character varying(255),
+    last_boot character varying(255),
+    root_data_model character varying(255),
+    web_auth character varying(255),
+    group_path character varying(255),
+    udp_con_req_url character varying(255),
     con_req_url character varying(255),
     cpu_usage character varying(255),
     cwmp_cycle_end smallint,
     device_alias character varying(255),
-    hardware_ver character varying(255),
-    mac_address character varying(255),
     management_ip character varying(255),
-    manufacturer character varying(255),
     memory_usage character varying(255),
-    model character varying(255),
-    oui character varying(255),
     public_ip character varying(255),
-    serial_num character varying(255),
     software_ver character varying(255),
     ssids character varying(255),
-    udp_con_req_url character varying(255),
-    second_wan_mac character varying(255),
-    ap_mode character varying(255),
-    firmware_ver character varying(255),
-    group_path character varying(255),
-    host_name character varying(255),
-    ip character varying(255),
-    last_boot character varying(255),
-    last_reboot character varying(255),
-    max_users character varying(255),
-    os_type character varying(255),
-    root_data_model character varying(255),
-    root_fs_ver character varying(255),
-    web_auth character varying(255)
+    second_wan_mac character varying(255)
 );
 
 
-ALTER TABLE acsdb.hive_devices OWNER TO apollo;
+ALTER TABLE acsdb.devices OWNER TO apollo;
 
 --
 -- Name: devices_seq; Type: TABLE; Schema: acsdb; Owner: apollo
@@ -424,7 +424,7 @@ ALTER TABLE public.device OWNER TO apollo;
 -- Name: devices; Type: TABLE; Schema: public; Owner: apollo
 --
 
-CREATE TABLE public.hive_devices (
+CREATE TABLE public.devices (
     id bigint NOT NULL,
     ap_mode character varying(255),
     con_req_url character varying(255),
@@ -450,7 +450,7 @@ CREATE TABLE public.hive_devices (
 );
 
 
-ALTER TABLE public.hive_devices OWNER TO apollo;
+ALTER TABLE public.devices OWNER TO apollo;
 
 --
 -- Name: group_command; Type: TABLE; Schema: public; Owner: apollo
@@ -636,7 +636,7 @@ ALTER TABLE ONLY acsdb.device_traffic_daily
 -- Name: devices idx_16424_primary; Type: CONSTRAINT; Schema: acsdb; Owner: apollo
 --
 
-ALTER TABLE ONLY acsdb.hive_devices
+ALTER TABLE ONLY acsdb.devices
     ADD CONSTRAINT idx_16424_primary PRIMARY KEY (id);
 
 
@@ -724,7 +724,7 @@ ALTER TABLE ONLY public.device
 -- Name: devices devices_pkey; Type: CONSTRAINT; Schema: public; Owner: apollo
 --
 
-ALTER TABLE ONLY public.hive_devices
+ALTER TABLE ONLY public.devices
     ADD CONSTRAINT devices_pkey PRIMARY KEY (id);
 
 

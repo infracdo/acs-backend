@@ -10,16 +10,15 @@ import com.acs_tr069.test_tr069.Entity.device;
 
 @Repository
 public interface device_frontendRepository extends CrudRepository<device, Long>{ // superior to zeep ver, will retain
-   @Query("SELECT d FROM device d WHERE d.serial_number=?1")
+   @Query(value = "SELECT * FROM device WHERE serial_number = ?1", nativeQuery = true)
    List<device> findBySerialNum(String serial_number);
 
-   @Query("SELECT d FROM device d WHERE d.serial_number=?1 AND d.parent=\'unassigned\'") // found in hive not in zeep 
+   @Query(value = "SELECT * FROM device WHERE serial_number = ?1 AND parent=\'unassigned\'", nativeQuery = true) // found in hive not in zeep 
    List<device> findBySerialNumOnRogue(String serial_number);
 
-   @Query("SELECT d FROM device d WHERE d.parent=?1")
+   @Query(value = "SELECT * FROM device WHERE parent = ?1", nativeQuery = true)
    List<device> findByGroup(String parent);
 
-   @Query("SELECT d FROM device d WHERE d.serial_number=?1")
+   @Query(value = "SELECT * FROM device WHERE serial_number = ?1", nativeQuery = true)
    device getBySerialNum(String serial_number);
-
 }

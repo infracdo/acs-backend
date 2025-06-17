@@ -56,7 +56,7 @@ import com.acs_tr069.test_tr069.CWMPResponses.RandomCodeGen;
 
 @CrossOrigin(origins = "*")
 @RestController
-@RequestMapping(path = "/api/hive/")
+@RequestMapping(path = "/hive/")
 public class hiveController {
 
     @Autowired

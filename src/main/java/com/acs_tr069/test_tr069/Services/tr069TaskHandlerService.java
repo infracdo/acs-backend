@@ -10,15 +10,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
 
 import com.acs_tr069.test_tr069.CWMPResponses.tr069Response;
-import com.acs_tr069.test_tr069.Entity.hive_devices;
+import com.acs_tr069.test_tr069.Entity.devices;
 import com.acs_tr069.test_tr069.Entity.taskhandler;
-import com.acs_tr069.test_tr069.Repo.hiveDevicesRepository;
+import com.acs_tr069.test_tr069.Repo.devicesRepository;
 import com.acs_tr069.test_tr069.Repo.taskhandlerRepo;
 import com.acs_tr069.test_tr069.UDP.udp_sender;
 
 @Service
 public class tr069TaskHandlerService {
-    
     
     private tr069Response tr069response;
 
@@ -26,7 +25,7 @@ public class tr069TaskHandlerService {
     private taskhandlerRepo taskhandlerRepo;
 
     @Autowired
-    private hiveDevicesRepository hiveDevicesRepo;
+    private devicesRepository devicesRepo;
 
     private String Tr069ResponseHandler(String Method, String Parameters, String Option){
         
@@ -84,13 +83,12 @@ public class tr069TaskHandlerService {
         newTasK.set_parameters(Parameters);
         newTasK.set_optional(Optional);
         taskhandlerRepo.save(newTasK);
-        hive_devices current_device = hiveDevicesRepo.gEntityBySerialnum(SN);
-        if(current_device.getcwmp_cycle_end()){
-            if(!current_device.getmanufacturer().equals("HGU")){
+        devices current_device = devicesRepo.getBySerialNum(SN);
+        if(current_device.getCwmpCycleEnd()){
+            if(!current_device.getManufacturer().equals("HGU")){
                 try {
                     SendUDPRequest(SN);
                 } catch (IOException e) {
-                    // TODO Auto-generated catch block
                     e.printStackTrace();
                 }
             }
@@ -104,7 +102,6 @@ public class tr069TaskHandlerService {
             try {
                 Thread.sleep(1 * 1000);
             } catch (InterruptedException e2) {
-                // TODO Auto-generated catch block
                 e2.printStackTrace();
             }
 
@@ -112,12 +109,11 @@ public class tr069TaskHandlerService {
             long timeStampSeconds = instant.toEpochMilli();
 
             //String result = "";
-            hive_devices current_device = hiveDevicesRepo.gEntityBySerialnum(SN);
-            String udp_url = current_device.getudp_con_req_url();
+            devices current_device = devicesRepo.getBySerialNum(SN);
+            String udp_url = current_device.getUdpConReqUrl();
             String[] device_udp_url = udp_url.split(":");
             String host = device_udp_url[0];
             Integer portnum = Integer.parseInt(device_udp_url[1]);
-
           
             StringBuilder sb = new StringBuilder();
 
@@ -127,23 +123,19 @@ public class tr069TaskHandlerService {
             sb.append("host:localhost\r\n");
             sb.append("Content-Length:0\r\n");
             
-            
             String msg = sb.toString();
             for(int i=0;i<2;i++){
                 udp_sender udpclient = null; 
                 try {
                     udpclient = new udp_sender();
                 } catch (SocketException e1) {
-                    // TODO Auto-generated catch block
                     e1.printStackTrace();
                 } catch (UnknownHostException e1) {
-                    // TODO Auto-generated catch block
                     e1.printStackTrace();
                 }
                 try {
                     udpclient.sendConnectionRequest(host, portnum, msg);
                 } catch (IOException e) {
-                    // TODO Auto-generated catch block
                     e.printStackTrace();
                     System.out.println(e);
                 }

@@ -48,7 +48,7 @@ import com.acs_tr069.test_tr069.ZabbixApi.ZabbixApiRPCCalls;
 import com.acs_tr069.test_tr069.CWMPResponses.RandomCodeGen;
 
 @CrossOrigin(origins = "*")
-@RequestMapping(path = "/api/zeep/")
+@RequestMapping(path = "/zeep/")
 public class zeepController { 
 
     @Autowired

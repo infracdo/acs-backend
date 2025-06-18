@@ -8,7 +8,7 @@ import javax.persistence.Column;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "`groups`")
+@Table(name = "`groups`") // used backticks to avoid conflict with mysql reserved keyword
 public class groups { // superior to zeep ver, will retain
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

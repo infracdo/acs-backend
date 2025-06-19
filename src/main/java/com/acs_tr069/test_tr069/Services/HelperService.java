@@ -90,8 +90,7 @@ public class HelperService {
             Integer portnum = Integer.parseInt(device_udp_url[1]);
             StringBuilder sb = new StringBuilder();
 
-            sb.append("GET http://" + udp_url + "?ts=" + timeStampSeconds + "&id=" + timeStampSeconds
-                    + "&un=&cn=XTG&sig=DEFAULTSIGDEFAULTSIGDEFAULTSIGDEFAULTSIG HTTP/1.1\r\n");
+            sb.append("GET http://" + udp_url + "?ts=" + timeStampSeconds + "&id=" + timeStampSeconds + "&un=&cn=XTG&sig=DEFAULTSIGDEFAULTSIGDEFAULTSIGDEFAULTSIG HTTP/1.1\r\n");
             sb.append("Accept:*/*\r\n");
             sb.append("Accept-Language:zh-cn\r\n");
             sb.append("host:localhost\r\n");

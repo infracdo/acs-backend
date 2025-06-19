@@ -6,7 +6,8 @@ import lombok.Data;
 @Data
 @Table(name = "devices")
 @Entity 
-public class devices { 
+public class Devices { 
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
@@ -40,4 +41,5 @@ public class devices {
     private String ssids;
     private String memoryUsage;
     private String cpuUsage;
+    
 }

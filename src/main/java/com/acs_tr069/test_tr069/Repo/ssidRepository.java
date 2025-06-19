@@ -1,17 +1,20 @@
 package com.acs_tr069.test_tr069.Repo;
+
 import java.util.List;
 
-import com.acs_tr069.test_tr069.Entity.group_ssid;
+import com.acs_tr069.test_tr069.Entity.GroupSsid;
 
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 
-public interface ssidRepository extends CrudRepository<group_ssid, Long> { // same with zeep ver, will retain
-    List<group_ssid> findByssid(String ssid);
-    
-    @Query("SELECT d FROM group_ssid d WHERE d.parent=?1")
-    List<group_ssid> findByGroup(String parent);
+public interface SsidRepository extends CrudRepository<GroupSsid, Long> {
 
-    @Query("SELECT d FROM group_ssid d WHERE d.id=?1")
-    group_ssid getByID(Long id);
+    List<GroupSsid> findByssid(String ssid);
+
+    @Query(value = "SELECT * FROM group_ssid WHERE parent = ?1", nativeQuery = true)
+    List<GroupSsid> findByGroup(String parent);
+
+    @Query(value = "SELECT * FROM group_ssid WHERE id = ?1", nativeQuery = true)
+    GroupSsid getByID(Long id);
+
 }

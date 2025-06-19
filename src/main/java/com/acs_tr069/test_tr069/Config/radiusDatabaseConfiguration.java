@@ -26,7 +26,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
     entityManagerFactoryRef = "radiusEntityManagerFactory",
     transactionManagerRef = "radiusTransactionManager"
 )
-public class radiusDatabaseConfiguration {
+public class RadiusDatabaseConfiguration {
     @Autowired
     private Environment env;
 

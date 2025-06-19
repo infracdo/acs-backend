@@ -22,24 +22,24 @@ import org.springframework.web.client.RestTemplate;
 
 import com.acs_tr069.test_tr069.CWMPResponses.GetSoapFromString;
 import com.acs_tr069.test_tr069.CWMPResponses.tr069Response;
-import com.acs_tr069.test_tr069.Entity.client_list;
-import com.acs_tr069.test_tr069.Entity.cpe_response_log;
-import com.acs_tr069.test_tr069.Entity.device;
-import com.acs_tr069.test_tr069.Entity.devices;
-import com.acs_tr069.test_tr069.Entity.group_command;
-import com.acs_tr069.test_tr069.Entity.group_ssid;
-import com.acs_tr069.test_tr069.Entity.httprequestlog;
-import com.acs_tr069.test_tr069.Entity.taskhandler;
-import com.acs_tr069.test_tr069.Entity.webcli_response_log;
-import com.acs_tr069.test_tr069.Repo.client_listRepository;
-import com.acs_tr069.test_tr069.Repo.cpe_response_logRepository;
-import com.acs_tr069.test_tr069.Repo.device_frontendRepository;
-import com.acs_tr069.test_tr069.Repo.devicesRepository;
-import com.acs_tr069.test_tr069.Repo.group_commandRepo;
-import com.acs_tr069.test_tr069.Repo.httplogreqRepo;
-import com.acs_tr069.test_tr069.Repo.ssidRepository;
-import com.acs_tr069.test_tr069.Repo.taskhandlerRepo;
-import com.acs_tr069.test_tr069.Repo.webcli_response_logRepo;
+import com.acs_tr069.test_tr069.Entity.ClientList;
+import com.acs_tr069.test_tr069.Entity.CpeResponseLog;
+import com.acs_tr069.test_tr069.Entity.Device;
+import com.acs_tr069.test_tr069.Entity.Devices;
+import com.acs_tr069.test_tr069.Entity.GroupCommand;
+import com.acs_tr069.test_tr069.Entity.GroupSsid;
+import com.acs_tr069.test_tr069.Entity.HttpRequestLog;
+import com.acs_tr069.test_tr069.Entity.TaskHandler;
+import com.acs_tr069.test_tr069.Entity.WebcliResponseLog;
+import com.acs_tr069.test_tr069.Repo.ClientListRepository;
+import com.acs_tr069.test_tr069.Repo.CpeResponseLogRepository;
+import com.acs_tr069.test_tr069.Repo.DeviceFrontendRepository;
+import com.acs_tr069.test_tr069.Repo.DevicesRepository;
+import com.acs_tr069.test_tr069.Repo.GroupCommandRepository;
+import com.acs_tr069.test_tr069.Repo.HttpLogReqRepository;
+import com.acs_tr069.test_tr069.Repo.SsidRepository;
+import com.acs_tr069.test_tr069.Repo.TaskHandlerRepository;
+import com.acs_tr069.test_tr069.Repo.WebcliResponseLogRepository;
 import com.acs_tr069.test_tr069.UDP.udp_sender;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -49,23 +49,23 @@ import com.google.common.base.Charsets;
 public class HelperService {
     
     @Autowired
-    private httplogreqRepo httplogreqRepo; 
+    private HttpLogReqRepository httplogreqRepo; 
     @Autowired
-    private taskhandlerRepo taskhandlerRepo; 
+    private TaskHandlerRepository taskhandlerRepo; 
     @Autowired
-    private devicesRepository devicesRepo; 
+    private DevicesRepository devicesRepo; 
     @Autowired
-    private webcli_response_logRepo webCliRepo;
+    private WebcliResponseLogRepository webCliRepo;
     @Autowired
-    private cpe_response_logRepository cpe_response_repo; 
+    private CpeResponseLogRepository cpe_response_repo; 
     @Autowired
-    private ssidRepository ssidRepo;
+    private SsidRepository ssidRepo;
     @Autowired
-    private device_frontendRepository device_front;
+    private DeviceFrontendRepository device_front;
     @Autowired
-    private client_listRepository client_listRepo; 
+    private ClientListRepository client_listRepo; 
     @Autowired
-    private group_commandRepo GroupCommandRepo;
+    private GroupCommandRepository GroupCommandRepo;
 
     private tr069Response tr069response;
     private GetSoapFromString getSoap;
@@ -83,7 +83,7 @@ public class HelperService {
             Instant instant = Instant.now();
             long timeStampSeconds = instant.toEpochMilli();
 
-            devices current_device = devicesRepo.getBySerialNum(SN);
+            Devices current_device = devicesRepo.getBySerialNum(SN);
             String udp_url = current_device.getUdpConReqUrl();
             String[] device_udp_url = udp_url.split(":");
             String host = device_udp_url[0];
@@ -119,14 +119,14 @@ public class HelperService {
     }
 
     public void SaveTask(String SN, String Method, String Parameters, String Optional) {
-        taskhandler newTasK = new taskhandler();
+        TaskHandler newTasK = new TaskHandler();
         newTasK.set_SN(SN);
         newTasK.set_method(Method);
         newTasK.set_parameters(Parameters);
         newTasK.set_optional(Optional);
         taskhandlerRepo.save(newTasK);
         try {
-            devices current_device = devicesRepo.getBySerialNum(SN);
+            Devices current_device = devicesRepo.getBySerialNum(SN);
             if (current_device.getCwmpCycleEnd()) {
                 SendUDPRequest(SN);
             }
@@ -137,13 +137,13 @@ public class HelperService {
     }
 
     public void ApplyOldCommand(String serial_num, String device_group) {
-        List<group_command> CommandsInGroup = GroupCommandRepo.findByParent(device_group);
-        devices currentDevice = devicesRepo.getBySerialNum(serial_num);
+        List<GroupCommand> CommandsInGroup = GroupCommandRepo.findByParent(device_group);
+        Devices currentDevice = devicesRepo.getBySerialNum(serial_num);
         String deviceModel = currentDevice.getModel();
 
         for (int i = 0; i < CommandsInGroup.size(); i++) {
-            group_command current_command = CommandsInGroup.get(i);
-            String[] command_in_line = current_command.getcommand().split("\n", -1);
+            GroupCommand current_command = CommandsInGroup.get(i);
+            String[] command_in_line = current_command.getCommand().split("\n", -1);
             StringBuilder sb = new StringBuilder();
             sb.append("{");
             for (int j = 0; j < command_in_line.length; j++) {
@@ -151,10 +151,10 @@ public class HelperService {
             }
 
             sb.append(",}");
-            if (current_command.getmodel().contains("ALL")) {
+            if (current_command.getModel().contains("ALL")) {
                 SaveTask(serial_num, "Command", sb.toString(), "config");
             } else {
-                if (current_command.getmodel().contains(deviceModel)) {
+                if (current_command.getModel().contains(deviceModel)) {
                     SaveTask(serial_num, "Command", sb.toString(), "config");
                 }
             }
@@ -162,7 +162,7 @@ public class HelperService {
     }
     
     public String GetNumberOfParameters(String serial_num, String Method) {
-        cpe_response_log cpe_response = null;
+        CpeResponseLog cpe_response = null;
         try {
             cpe_response = cpe_response_repo.getBySerialNumEquals(serial_num);
         } catch (Exception e) {
@@ -172,10 +172,10 @@ public class HelperService {
         if(cpe_response == null){
             return "None";
         }else{
-            if (cpe_response.get_method().contains(Method)) {
+            if (cpe_response.getMethod().contains(Method)) {
                 SOAPBody soapBody = null;
                 try {
-                    soapBody = getSoap.StringToSAOP(cpe_response.get_payload()).getSOAPBody();
+                    soapBody = getSoap.StringToSAOP(cpe_response.getPayload()).getSOAPBody();
                 } catch (SOAPException e) {
                     e.printStackTrace();
                 }
@@ -232,14 +232,14 @@ public class HelperService {
     }
 
     public void AddOldSSID(String serial_num, String deviceGroup) { 
-        List<group_ssid> ssids = ssidRepo.findByGroup(deviceGroup);
+        List<GroupSsid> ssids = ssidRepo.findByGroup(deviceGroup);
         Integer num_ssid = ssids.size();
         for (int i = 0; i < num_ssid; i++) {
-            group_ssid currentSsid = ssids.get(i);
-            Integer wlan_id = currentSsid.getwlan_id();
+            GroupSsid currentSsid = ssids.get(i);
+            Integer wlan_id = currentSsid.getWlanId();
             StringBuilder SSIDSettings = new StringBuilder();
             String encryptionMode = null;
-            String encrypModetoConvert = currentSsid.getencryption_mode();
+            String encrypModetoConvert = currentSsid.getEncryptionMode();
 
             if (encrypModetoConvert.contains("Open")) {
                 encryptionMode = "None";
@@ -250,35 +250,35 @@ public class HelperService {
             if (encrypModetoConvert.contains("WPA2-PSK")) {
                 encryptionMode = "WPA2-Personal";
             }
-            SSIDSettings.append("{,Device.WiFi.SSID." + wlan_id + ".SSID:" + currentSsid.getssid());
+            SSIDSettings.append("{,Device.WiFi.SSID." + wlan_id + ".SSID:" + currentSsid.getSsid());
             SSIDSettings.append(",Device.WiFi.SSID." + wlan_id + ".LowerLayers:1&2");
-            if (currentSsid.getforward_mode().contains("Nat")) {
+            if (currentSsid.getForwardMode().contains("Nat")) {
                 SSIDSettings.append(",Device.WiFi.SSID." + wlan_id + ".X_WWW-RUIJIE-COM-CN_IsHidden:true");
             } else {
                 SSIDSettings.append(",Device.WiFi.SSID." + wlan_id + ".X_WWW-RUIJIE-COM-CN_IsHidden:false");
             }
-            SSIDSettings.append(",Device.WiFi.SSID." + wlan_id + ".X_WWW-RUIJIE-COM-CN_FowardType:" + currentSsid.getforward_mode());
+            SSIDSettings.append(",Device.WiFi.SSID." + wlan_id + ".X_WWW-RUIJIE-COM-CN_FowardType:" + currentSsid.getForwardMode());
 
-            if (currentSsid.getforward_mode().contains("Bridge")) {
-                SSIDSettings.append(",Device.WiFi.SSID." + wlan_id + ".X_WWW-RUIJIE-COM-CN_VLANID:" + currentSsid.getvlan_id());
+            if (currentSsid.getForwardMode().contains("Bridge")) {
+                SSIDSettings.append(",Device.WiFi.SSID." + wlan_id + ".X_WWW-RUIJIE-COM-CN_VLANID:" + currentSsid.getVlanId());
             }
             SSIDSettings.append(",Device.WiFi.AccessPoint." + wlan_id + ".Security.ModeEnabled:" + encryptionMode);
             if (encryptionMode.contains("None") == false) {
-                SSIDSettings.append(",Device.WiFi.AccessPoint." + wlan_id + ".Security.KeyPassphrase:" + currentSsid.getpassphrase() + ",}");
+                SSIDSettings.append(",Device.WiFi.AccessPoint." + wlan_id + ".Security.KeyPassphrase:" + currentSsid.getPassphrase() + ",}");
             } else {
                 SSIDSettings.append(",}");
             }
 
             AddNewSSID(SSIDSettings.toString(), serial_num, wlan_id.toString());
-            if (currentSsid.getauth()) {
+            if (currentSsid.isAuth()) {
                 StringBuilder AuthSettings = new StringBuilder();
                 AuthSettings.append("{,WiFiDog");
-                AuthSettings.append("," + currentSsid.getportal_ip());
-                AuthSettings.append("," + currentSsid.getportal_url());
+                AuthSettings.append("," + currentSsid.getPortalIp());
+                AuthSettings.append("," + currentSsid.getPortalUrl());
                 AuthSettings.append(",js");
-                AuthSettings.append("," + currentSsid.getgateway_id());
+                AuthSettings.append("," + currentSsid.getGatewayId());
                 AuthSettings.append(",true");
-                AuthSettings.append("," + currentSsid.getseamless() + ",}");
+                AuthSettings.append("," + currentSsid.isSeamless() + ",}");
 
                 AddNewAuth(AuthSettings.toString(), serial_num, wlan_id.toString());
             }
@@ -290,7 +290,7 @@ public class HelperService {
         try {
             String currentCookie = request.getHeader("Cookie").split(";")[0];
             if (httplogreqRepo.findByCookie(currentCookie).isEmpty() == false) {
-                DeviceSN = httplogreqRepo.getByCookie(currentCookie).get_SN();
+                DeviceSN = httplogreqRepo.getByCookie(currentCookie).getSerialNum();
             }
             return DeviceSN;
         } catch (Exception e) {
@@ -300,14 +300,14 @@ public class HelperService {
 
     public void SaveSNandCookie(String SN, String Cookie) { 
         if (httplogreqRepo.findBySerialNumEquals(SN).isEmpty()) {
-            httprequestlog newHttpLog = new httprequestlog();
-            newHttpLog.set_SN(SN);
-            newHttpLog.set_cookie("session=" + Cookie);
+            HttpRequestLog newHttpLog = new HttpRequestLog();
+            newHttpLog.setSerialNum(SN);
+            newHttpLog.setCookie("session=" + Cookie);
             httplogreqRepo.save(newHttpLog);
         } else {
-            httprequestlog newHttpLog = httplogreqRepo.getBySerialNumEquals(SN);
-            newHttpLog.set_SN(SN);
-            newHttpLog.set_cookie("session=" + Cookie);
+            HttpRequestLog newHttpLog = httplogreqRepo.getBySerialNumEquals(SN);
+            newHttpLog.setSerialNum(SN);
+            newHttpLog.setCookie("session=" + Cookie);
             httplogreqRepo.save(newHttpLog);
         }
     }
@@ -337,8 +337,8 @@ public class HelperService {
         System.out.println(content);
         JSONObject data = new JSONObject(content);
         new Thread(() -> {
-            List<client_list> clients = client_listRepo.findBySerialNumEquals(serial_num);
-            for (client_list client_list : clients) {
+            List<ClientList> clients = client_listRepo.findBySerialNumEquals(serial_num);
+            for (ClientList client_list : clients) {
                 client_listRepo.delete(client_list);
             }
             String string_data = null;
@@ -350,17 +350,17 @@ public class HelperService {
             String[] data_array = string_data.split("\r\n", -1);
             for (int i = 3; i < data_array.length; i++) {
                 String[] datas = data_array[i].split("\\s+", -1);
-                client_list client = new client_list();
+                ClientList client = new ClientList();
                 if (datas[0].contains("1")) {
-                    client.setband("2.4G");
+                    client.setBand("2.4G");
                 } else {
-                    client.setband("5G");
+                    client.setBand("5G");
                 }
-                client.setmacc(datas[2]);
-                client.setrssi(datas[7]);
+                client.setMacc(datas[2]);
+                client.setRssi(datas[7]);
                 DateTimeFormatter dt_date = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
                 LocalDateTime now = LocalDateTime.now();
-                client.setup(dt_date.format(now));
+                client.setUp(dt_date.format(now));
                 StringBuilder ssid = new StringBuilder();
                 if (datas.length > 16) {
                     for (int y = 16; y < datas.length; y++) {
@@ -373,8 +373,8 @@ public class HelperService {
                 } else {
                     ssid.append(datas[16]);
                 }
-                client.settraffic(datas[5]);
-                client.setssid(ssid.toString());
+                client.setTraffic(datas[5]);
+                client.setSsid(ssid.toString());
                 client_listRepo.save(client);
             }
         }).start();
@@ -386,15 +386,15 @@ public class HelperService {
         new Thread(() -> {
             String[] lines = data_content.split("\r\n", -1);
 
-            List<client_list> clients = client_listRepo.findBySerialNumEquals(serial_num);
-            for (client_list client_list : clients) {
-                String[] mac = client_list.getmacc().split(":", -1);
+            List<ClientList> clients = client_listRepo.findBySerialNumEquals(serial_num);
+            for (ClientList client_list : clients) {
+                String[] mac = client_list.getMacc().split(":", -1);
                 int i = 0;
                 for (String string_line : lines) {
                     String mac_address = mac[0] + mac[1] + "." + mac[2] + mac[3] + "." + mac[4] + mac[5];
                     if (string_line.contains(mac_address)) {
                         String[] ip = lines[i + 1].split("\\s+", -1);
-                        client_list.setip(ip[1]);
+                        client_list.setIp(ip[1]);
                         client_listRepo.save(client_list);
                         break;
                     }
@@ -406,17 +406,17 @@ public class HelperService {
 
     public void LogRequest(String Method, String Payload, String serial_num) { 
         new Thread(() -> {
-            cpe_response_log newCPE_log = new cpe_response_log();
-            newCPE_log.set_Method(Method);
-            newCPE_log.set_Payload(Payload);
-            newCPE_log.set_SN(serial_num);
+            CpeResponseLog newCPE_log = new CpeResponseLog();
+            newCPE_log.setMethod(Method);
+            newCPE_log.setPayload(Payload);
+            newCPE_log.setSerialNum(serial_num);
 
             cpe_response_repo.save(newCPE_log);
         }, "logging " + serial_num).start();
     }
 
     public void UpdateDeviceStatus(String SerialNum, String Status) { 
-        device devicestat = device_front.getBySerialNum(SerialNum);
+        Device devicestat = device_front.getBySerialNum(SerialNum);
         if (devicestat.getStatus().contains("syncing") == false) {
             devicestat.setStatus(Status);
         }
@@ -474,15 +474,15 @@ public class HelperService {
     public String GetCLIOutput(String SerialNum, String ObjectName) { 
         String Outputbody = null;
         String CommandUsed = null;
-        List<webcli_response_log> cliOutput = webCliRepo.findBySerialNumEquals(SerialNum);
+        List<WebcliResponseLog> cliOutput = webCliRepo.findBySerialNumEquals(SerialNum);
         if (cliOutput != null) {
             Integer NumOutput = cliOutput.size();
             for (int i = 0; i < NumOutput; i++) {
-                webcli_response_log currentCheck = cliOutput.get(i);
-                CommandUsed = new String(currentCheck.get_CommandUsed(), Charsets.UTF_8);
+                WebcliResponseLog currentCheck = cliOutput.get(i);
+                CommandUsed = new String(currentCheck.getCommandUsed(), Charsets.UTF_8);
                 if (CommandUsed.contains("\"" + ObjectName + "\"")) {
-                    Outputbody = new String(currentCheck.get_CommandOutput(), Charsets.UTF_8);
-                    webCliRepo.delete(webCliRepo.getByID(currentCheck.get_Id()));
+                    Outputbody = new String(currentCheck.getCommandOutput(), Charsets.UTF_8);
+                    webCliRepo.delete(webCliRepo.getByID(currentCheck.getId()));
                     return Outputbody;
                 }
             }
@@ -496,11 +496,11 @@ public class HelperService {
             byte[] command_byte = CommandUsed.getBytes(Charsets.UTF_8);
 
             System.out.println("Saving CLI Response: " + new Timestamp(System.currentTimeMillis()));
-            webcli_response_log webCLIlog = new webcli_response_log();
-            webCLIlog.set_CommandOutput(webcli_byte);
-            webCLIlog.set_device_sn(SN);
-            webCLIlog.set_CommandUsed(command_byte);
-            webCLIlog.set_time_saved(new Timestamp(System.currentTimeMillis()));
+            WebcliResponseLog webCLIlog = new WebcliResponseLog();
+            webCLIlog.setCommandOutput(webcli_byte);
+            webCLIlog.setDeviceSn(SN);
+            webCLIlog.setCommandUsed(command_byte);
+            webCLIlog.setTimeSaved(new Timestamp(System.currentTimeMillis()));
             webCliRepo.save(webCLIlog);
             System.out.println("Saved CLI Response: " + new Timestamp(System.currentTimeMillis()));
         }).start();
@@ -652,7 +652,7 @@ public class HelperService {
     }
 
     public void UnrougeDevice(String SerialNum) {
-        device device = device_front.getBySerialNum(SerialNum);
+        Device device = device_front.getBySerialNum(SerialNum);
         device.setParent("Residential");
         device_front.save(device);
     }

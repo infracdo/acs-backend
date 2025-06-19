@@ -10,24 +10,24 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
 
 import com.acs_tr069.test_tr069.CWMPResponses.tr069Response;
-import com.acs_tr069.test_tr069.Entity.devices;
-import com.acs_tr069.test_tr069.Entity.taskhandler;
-import com.acs_tr069.test_tr069.Repo.devicesRepository;
-import com.acs_tr069.test_tr069.Repo.taskhandlerRepo;
+import com.acs_tr069.test_tr069.Entity.Devices;
+import com.acs_tr069.test_tr069.Entity.TaskHandler;
+import com.acs_tr069.test_tr069.Repo.DevicesRepository;
+import com.acs_tr069.test_tr069.Repo.TaskHandlerRepository;
 import com.acs_tr069.test_tr069.UDP.udp_sender;
 
 @Service
-public class tr069TaskHandlerService {
+public class Tr069TaskHandlerService {
     
     private tr069Response tr069response;
 
     @Autowired
-    private taskhandlerRepo taskhandlerRepo;
+    private TaskHandlerRepository taskhandlerRepo;
 
     @Autowired
-    private devicesRepository devicesRepo;
+    private DevicesRepository devicesRepo;
 
-    private String Tr069ResponseHandler(String Method, String Parameters, String Option){
+    public String Tr069ResponseHandler(String Method, String Parameters, String Option){
         
         if(Method.contains("AddObject")){
             String body =  tr069response.AddObject(Parameters);
@@ -77,13 +77,13 @@ public class tr069TaskHandlerService {
     }
 
     public void SaveTask(String SN, String Method,String Parameters,String Optional){
-        taskhandler newTasK = new taskhandler();
+        TaskHandler newTasK = new TaskHandler();
         newTasK.set_SN(SN);
         newTasK.set_method(Method);
         newTasK.set_parameters(Parameters);
         newTasK.set_optional(Optional);
         taskhandlerRepo.save(newTasK);
-        devices current_device = devicesRepo.getBySerialNum(SN);
+        Devices current_device = devicesRepo.getBySerialNum(SN);
         if(current_device.getCwmpCycleEnd()){
             if(!current_device.getManufacturer().equals("HGU")){
                 try {
@@ -109,7 +109,7 @@ public class tr069TaskHandlerService {
             long timeStampSeconds = instant.toEpochMilli();
 
             //String result = "";
-            devices current_device = devicesRepo.getBySerialNum(SN);
+            Devices current_device = devicesRepo.getBySerialNum(SN);
             String udp_url = current_device.getUdpConReqUrl();
             String[] device_udp_url = udp_url.split(":");
             String host = device_udp_url[0];

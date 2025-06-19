@@ -26,7 +26,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
     entityManagerFactoryRef = "acsEntityManagerFactory",
     transactionManagerRef = "acsTransactionManager"
 )
-public class acsDatabaseConfiguration {
+public class AcsDatabaseConfiguration {
     
     @Autowired
     private Environment env;

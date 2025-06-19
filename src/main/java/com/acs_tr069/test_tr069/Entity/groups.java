@@ -7,80 +7,44 @@ import javax.persistence.Id;
 import javax.persistence.Column;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+
+import lombok.Data;
+
+@Data
 @Entity
 @Table(name = "`groups`") // used backticks to avoid conflict with mysql reserved keyword
-public class groups { // superior to zeep ver, will retain
+public class Groups { // superior to zeep ver, will retain
+    
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
 	@Column(name = "group_name")
-    private String group_name;
+    private String groupName;
 
-	@Column(name = "location")
     private String location;
-
-    @Column(name = "parent")
     private String parent;
-
-	@Column(name = "child")
     private String child;
 
+    @CreationTimestamp
 	@Column(name = "date_created")
-    private String date_created;
+    private String dateCreated;
 
+    @UpdateTimestamp
 	@Column(name = "date_modified")
-    private String date_modified;
+    private String dateModified;
 
-    public Long getId(){
-        return id;
+    public Groups() {
     }
-    public String getgroup_name(){
-        return group_name;
-    }
-    public String getlocation(){
-        return location;
-    }
-    public String getparent(){
-        return parent;
-    }
-    public String getchild(){
-        return child;
-    }
-    public String getdate_created(){
-        return date_created;
-    }
-    public String getdate_modified(){
-        return date_modified;
-    }
-
-    public void setgroup_name(String group_name){
-        this.group_name = group_name;
-    }
-    public void setlocation(String location){
-        this.location = location;
-    }
-    public void setparent(String parent){
-        this.parent = parent;
-    }
-    public void setchild(String child){
-        this.child = child;
-    }
-    public void setdate_created(String date_created){
-        this.date_created = date_created;
-    }
-    public void setdate_modified(String date_modified){
-        this.date_modified = date_modified;
-    }
-    public groups() {
-    }
-    public groups(String group_name, String location, String parent, String child, String date_created, String date_modified) {
-		this.group_name = group_name;
+    public Groups(String groupName, String location, String parent, String child, String dateCreated, String dateModified) {
+		this.groupName = groupName;
 		this.location = location;
 		this.parent = parent;
         this.child = child;
-        this.date_created = date_created;
-		this.date_modified = date_modified;
+        this.dateCreated = dateCreated;
+		this.dateModified = dateModified;
 	}
 
 }

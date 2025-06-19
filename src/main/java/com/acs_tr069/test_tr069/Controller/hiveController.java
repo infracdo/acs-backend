@@ -34,22 +34,22 @@ import org.w3c.dom.NodeList;
 
 import com.acs_tr069.test_tr069.CWMPResponses.tr069Response;
 import com.acs_tr069.test_tr069.CWMPResponses.GetSoapFromString;
-import com.acs_tr069.test_tr069.Entity.httprequestlog;
-import com.acs_tr069.test_tr069.Entity.taskhandler;
-import com.acs_tr069.test_tr069.Entity.webcli_response_log;
-import com.acs_tr069.test_tr069.Entity.group_ssid;
-import com.acs_tr069.test_tr069.Entity.device;
-import com.acs_tr069.test_tr069.Entity.device_model_parameters;
-import com.acs_tr069.test_tr069.Entity.devices;
-import com.acs_tr069.test_tr069.Repo.httplogreqRepo;
-import com.acs_tr069.test_tr069.Repo.taskhandlerRepo;
-import com.acs_tr069.test_tr069.Repo.webcli_response_logRepo;
-import com.acs_tr069.test_tr069.Repo.devicesRepository;
+import com.acs_tr069.test_tr069.Entity.HttpRequestLog;
+import com.acs_tr069.test_tr069.Entity.TaskHandler;
+import com.acs_tr069.test_tr069.Entity.WebcliResponseLog;
+import com.acs_tr069.test_tr069.Entity.GroupSsid;
+import com.acs_tr069.test_tr069.Entity.Device;
+import com.acs_tr069.test_tr069.Entity.DeviceModelParameters;
+import com.acs_tr069.test_tr069.Entity.Devices;
+import com.acs_tr069.test_tr069.Repo.HttpLogReqRepository;
+import com.acs_tr069.test_tr069.Repo.TaskHandlerRepository;
+import com.acs_tr069.test_tr069.Repo.WebcliResponseLogRepository;
+import com.acs_tr069.test_tr069.Repo.DevicesRepository;
 import com.acs_tr069.test_tr069.Services.HelperService;
-import com.acs_tr069.test_tr069.Services.rlDeviceService;
-import com.acs_tr069.test_tr069.Repo.ssidRepository;
-import com.acs_tr069.test_tr069.Repo.device_frontendRepository;
-import com.acs_tr069.test_tr069.Repo.device_model_parametersRepository;
+import com.acs_tr069.test_tr069.Services.RlDeviceService;
+import com.acs_tr069.test_tr069.Repo.SsidRepository;
+import com.acs_tr069.test_tr069.Repo.DeviceFrontendRepository;
+import com.acs_tr069.test_tr069.Repo.DeviceModelParametersRepository;
 import com.acs_tr069.test_tr069.StoreRequestResult.GetResponseResult;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.acs_tr069.test_tr069.CWMPResponses.RandomCodeGen;
@@ -57,24 +57,24 @@ import com.acs_tr069.test_tr069.CWMPResponses.RandomCodeGen;
 @CrossOrigin(origins = "*")
 @RestController
 @RequestMapping(path = "/hive/")
-public class hiveController {
+public class HiveController {
 
     @Autowired
-    private httplogreqRepo httplogreqRepo; 
+    private HttpLogReqRepository httplogreqRepo; 
     @Autowired
-    private taskhandlerRepo taskhandlerRepo;
+    private TaskHandlerRepository taskhandlerRepo;
     @Autowired
-    private devicesRepository devicesRepo; 
+    private DevicesRepository devicesRepo; 
     @Autowired
-    private webcli_response_logRepo webCliRepo; 
+    private WebcliResponseLogRepository webCliRepo; 
     @Autowired
-    private ssidRepository ssidRepo; 
+    private SsidRepository ssidRepo; 
     @Autowired
-    private device_frontendRepository device_front; 
+    private DeviceFrontendRepository device_front; 
     @Autowired
-    private device_model_parametersRepository device_model_parameters_repo; 
+    private DeviceModelParametersRepository device_model_parameters_repo; 
     @Autowired
-    private rlDeviceService rl_devices_services; 
+    private RlDeviceService rl_devices_services; 
     @Autowired
     private HelperService helperService;
 
@@ -164,7 +164,7 @@ public class hiveController {
                     response.addHeader("Set-Cookie", "session=" + SNCookie);
                     responsebody = tr069response.InformResponse();
 
-                    device check_device = device_front.getBySerialNum(SN);
+                    Device check_device = device_front.getBySerialNum(SN);
                     if (check_device == null) {
                         try {
                             UpdateDevicesTable(xmlPayload);
@@ -271,7 +271,7 @@ public class hiveController {
             String DeviceSN = helperService.GetDeviceSerialNum(request);
             if (!DeviceSN.contains("None")) { 
                 if (taskhandlerRepo.findBySerialNumEquals(DeviceSN).isEmpty() == false) {
-                    List<taskhandler> task = taskhandlerRepo.findBySerialNumEquals(DeviceSN);
+                    List<TaskHandler> task = taskhandlerRepo.findBySerialNumEquals(DeviceSN);
                     String Method = task.get(0).get_method().toString();
                     String Parameters = task.get(0).get_parameters().toString();
                     String Optional = task.get(0).get_optional();
@@ -310,14 +310,14 @@ public class hiveController {
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
-                    devices current_device = devicesRepo.getBySerialNum(DeviceSN); 
+                    Devices current_device = devicesRepo.getBySerialNum(DeviceSN); 
                     System.out.println(current_device.getCwmpCycleEnd());
                     current_device.setCwmpCycleEnd(true); 
                     devicesRepo.save(current_device);
                     result.setResult(ResponseEntity.status(HttpStatus.NO_CONTENT).contentType(MediaType.TEXT_XML).body(null));
                 }
             } else { 
-                devices current_device = devicesRepo.getBySerialNum(DeviceSN);
+                Devices current_device = devicesRepo.getBySerialNum(DeviceSN);
                 System.out.println(current_device);
                 current_device.setCwmpCycleEnd(true);
                 devicesRepo.save(current_device);
@@ -346,8 +346,8 @@ public class hiveController {
             NumEvent = soapBody.getElementsByTagName("Event").item(0).getChildNodes().getLength();
             String serial_num = soapBody.getElementsByTagName("SerialNumber").item(0).getTextContent();
 
-            httprequestlog logRequest = httplogreqRepo.getBySerialNumEquals(serial_num);
-            logRequest.set_lastRequest(new Timestamp(System.currentTimeMillis()));
+            HttpRequestLog logRequest = httplogreqRepo.getBySerialNumEquals(serial_num);
+            logRequest.setLastRequest(new Timestamp(System.currentTimeMillis()));
             httplogreqRepo.save(logRequest);
 
             for (int i = 0; i < NumEvent; i++) {
@@ -356,7 +356,7 @@ public class hiveController {
                     if (!soapBody.getElementsByTagName("Event").item(0).getChildNodes().item(i).getChildNodes().item(j).getTextContent().trim().isEmpty()) {
                         String EventCode = soapBody.getElementsByTagName("Event").item(0).getChildNodes().item(i).getChildNodes().item(j).getTextContent();
                         if (EventCode.contains("BOOT")) {
-                            device device = device_front.getBySerialNum(serial_num);
+                            Device device = device_front.getBySerialNum(serial_num);
                             String deviceGroup = device.getParent();
                             if (!deviceGroup.matches("unassigned")) {
                                 String[] Devicesgroups = deviceGroup.split("/");
@@ -380,7 +380,7 @@ public class hiveController {
                                     e.printStackTrace();
                                 }
                             } else {
-                                device device_to_bootstrap = device_front.getBySerialNum(serial_num);
+                                Device device_to_bootstrap = device_front.getBySerialNum(serial_num);
                                 if (!device_to_bootstrap.getParent().matches("unassigned")) {
                                     if (device_to_bootstrap.getStatus().contains("syncing") == false) {
                                         device_to_bootstrap.setStatus("syncing");
@@ -405,8 +405,8 @@ public class hiveController {
 
     private void Bootstraping(String serial_num) { 
         new Thread(() -> {
-            device device = device_front.getBySerialNum(serial_num);
-            devices device_details = devicesRepo.getBySerialNum(serial_num);
+            Device device = device_front.getBySerialNum(serial_num);
+            Devices device_details = devicesRepo.getBySerialNum(serial_num);
             if (device_details.getManufacturer().equals("HGU")) {
                 rl_devices_services.AddSSID(serial_num, "{ssid_id:2}");
                 rl_devices_services.addWANConnectionDevice(serial_num, "{wlan_id:2,wlan_mode:2,wlan_vlan:2000}");
@@ -477,7 +477,7 @@ public class hiveController {
                 ObjectName = "{,Command:cwmp,Command:timer cpe-timeout 90,Command:cpe inform interval 180,Command:end,Command:write,}";
                 helperService.SaveTask(serial_num, "Command", ObjectName, "config");
 
-                List<device> deviceTobeset = device_front.findBySerialNum(serial_num);
+                List<Device> deviceTobeset = device_front.findBySerialNum(serial_num);
                 String deviceName = deviceTobeset.get(0).getDeviceName().replaceAll(" ", "_");
                 if (deviceName == null) {
                     deviceName = "DefaultAPName";
@@ -511,10 +511,10 @@ public class hiveController {
             }
 
             while (true) {
-                List<taskhandler> remainingTask = taskhandlerRepo.findBySerialNumEquals(serial_num);
+                List<TaskHandler> remainingTask = taskhandlerRepo.findBySerialNumEquals(serial_num);
                 Integer NumRemainingTask = remainingTask.size();
                 if (NumRemainingTask < 1) {
-                    device device_to_bootstrap = device_front.getBySerialNum(serial_num);
+                    Device device_to_bootstrap = device_front.getBySerialNum(serial_num);
                     device_to_bootstrap.setStatus("synced");
                     device_front.save(device_to_bootstrap);
                     break;
@@ -527,13 +527,13 @@ public class hiveController {
 
     @Scheduled(fixedRate = 60000)
     private void DeviceStatusUpdate() { 
-        Iterable<webcli_response_log> webcli_logs = webCliRepo.findAll(); 
-        for (webcli_response_log webcli_response_log : webcli_logs) {
+        Iterable<WebcliResponseLog> webcli_logs = webCliRepo.findAll(); 
+        for (WebcliResponseLog webcli_response_log : webcli_logs) {
             Long interv;
             Timestamp currTime = new Timestamp(System.currentTimeMillis());
             Long timeInterv = (long) 0;
             try {
-                timeInterv = currTime.getTime() - webcli_response_log.get_time_saved().getTime();
+                timeInterv = currTime.getTime() - webcli_response_log.getTimeSaved().getTime();
             } catch (Exception e) {
                 timeInterv = (long) (60000 * 3);
             }
@@ -544,22 +544,22 @@ public class hiveController {
             }
         } 
 
-        Iterable<httprequestlog> listOfDevices = httplogreqRepo.findAll();
-        for (httprequestlog httprequestlog : listOfDevices) {
+        Iterable<HttpRequestLog> listOfDevices = httplogreqRepo.findAll();
+        for (HttpRequestLog httprequestlog : listOfDevices) {
             Long interval;
             Timestamp currentTime = new Timestamp(System.currentTimeMillis());
             Long timeInterval = (long) 0;
             try {
-                timeInterval = currentTime.getTime() - httprequestlog.get_lastRequest().getTime();
+                timeInterval = currentTime.getTime() - httprequestlog.getLastRequest().getTime();
             } catch (Exception e) {
                 timeInterval = (long) (60000 * 5);
             }
 
             interval = timeInterval / 60000;
-            device curent_device = null;
+            Device curent_device = null;
             while (true) {
-                if (httprequestlog.get_SN() != null) {
-                    curent_device = device_front.getBySerialNum(httprequestlog.get_SN());
+                if (httprequestlog.getSerialNum() != null) {
+                    curent_device = device_front.getBySerialNum(httprequestlog.getSerialNum());
                     break;
                 }
             }
@@ -570,12 +570,12 @@ public class hiveController {
                     LocalDateTime now = LocalDateTime.now();
                     curent_device.setDateOffline(dtf.format(now));
                     device_front.save(curent_device);
-                    helperService.UpdateDeviceStatus(httprequestlog.get_SN(), "offline");
+                    helperService.UpdateDeviceStatus(httprequestlog.getSerialNum(), "offline");
                     if (curent_device.getParent().matches("unassigned")) {
                         device_front.delete(curent_device);
                     }
                 } else {
-                    helperService.UpdateDeviceStatus(httprequestlog.get_SN(), "online");
+                    helperService.UpdateDeviceStatus(httprequestlog.getSerialNum(), "online");
                 }
             }
         }
@@ -617,7 +617,7 @@ public class hiveController {
             e.printStackTrace();
         }
 
-        device_model_parameters model_param = null;
+        DeviceModelParameters model_param = null;
         try {
             model_param = device_model_parameters_repo.searchByManufacturerAndModel(InformData.getElementsByTagName("Manufacturer").item(0).getTextContent(), InformData.getElementsByTagName("ProductClass").item(0).getTextContent());
         } catch (Exception e) {
@@ -625,50 +625,50 @@ public class hiveController {
         }
 
         if (devicesRepo.findBySerialNum(InformData.getElementsByTagName("SerialNumber").item(0).getTextContent()).isEmpty()) {
-            devices newDevice = new devices();
+            Devices newDevice = new Devices();
             newDevice.setSerialNum(InformData.getElementsByTagName("SerialNumber").item(0).getTextContent());
             newDevice.setManufacturer(InformData.getElementsByTagName("Manufacturer").item(0).getTextContent());
             newDevice.setOui(InformData.getElementsByTagName("OUI").item(0).getTextContent());
             newDevice.setModel(InformData.getElementsByTagName("ProductClass").item(0).getTextContent());
             if (model_param != null) {
                 try {
-                    newDevice.setMacAddress(object.get(model_param.getMac_address_parameter()).toString());
+                    newDevice.setMacAddress(object.get(model_param.getMacAddressParameter()).toString());
                 } catch (Exception e) {
                 }
                 try {
-                    newDevice.setUdpConReqUrl(object.get(model_param.getUdp_con_req_url_parameter()).toString());
+                    newDevice.setUdpConReqUrl(object.get(model_param.getUdpConReqUrlParameter()).toString());
                 } catch (Exception e) {
                 }
                 try {
-                    newDevice.setManagementIp(object.get(model_param.getManagement_ip_parameter()).toString());
+                    newDevice.setManagementIp(object.get(model_param.getManagementIpParameter()).toString());
                 } catch (Exception e) {
                 }
                 try {
-                    newDevice.setPublicIp(object.get(model_param.getPublic_ip_parameter()).toString());
+                    newDevice.setPublicIp(object.get(model_param.getPublicIpParameter()).toString());
                 } catch (Exception e) {
                 }
                 try {
-                    newDevice.setSecondWanMac(object.get(model_param.getSecond_wan_mac()).toString());
+                    newDevice.setSecondWanMac(object.get(model_param.getSecondWanMac()).toString());
                     System.out.println("WAN2 Mac Added");
                 } catch (Exception e) {
                 }
                 try {
-                    newDevice.setHardwareVer(object.get(model_param.getHardware_ver_parameter()).toString());
+                    newDevice.setHardwareVer(object.get(model_param.getHardwareVerParameter()).toString());
                 } catch (Exception e) {
                 }
                 try {
-                    newDevice.setSoftwareVer(object.get(model_param.getSoftware_ver_parameter()).toString());
+                    newDevice.setSoftwareVer(object.get(model_param.getSoftwareVerParameter()).toString());
                 } catch (Exception e) {
                 }
                 try {
-                    newDevice.setConReqUrl(object.get(model_param.getCon_req_url_parameter()).toString());
+                    newDevice.setConReqUrl(object.get(model_param.getConReqUrlParameter()).toString());
                 } catch (Exception e) {
                 }
             }
             newDevice.setCwmpCycleEnd(false);
             devicesRepo.save(newDevice);
         } else {
-            devices deviceUpdate = devicesRepo.getBySerialNum(InformData.getElementsByTagName("SerialNumber").item(0).getTextContent());
+            Devices deviceUpdate = devicesRepo.getBySerialNum(InformData.getElementsByTagName("SerialNumber").item(0).getTextContent());
             deviceUpdate.setSerialNum(InformData.getElementsByTagName("SerialNumber").item(0).getTextContent());
             deviceUpdate.setManufacturer(InformData.getElementsByTagName("Manufacturer").item(0).getTextContent());
             deviceUpdate.setOui(InformData.getElementsByTagName("OUI").item(0).getTextContent());
@@ -676,59 +676,59 @@ public class hiveController {
 
             if (model_param != null) {
                 try {
-                    deviceUpdate.setMacAddress(object.get(model_param.getMac_address_parameter()).toString());
+                    deviceUpdate.setMacAddress(object.get(model_param.getMacAddressParameter()).toString());
                 } catch (Exception e) {
                 }
                 try {
-                    deviceUpdate.setUdpConReqUrl(object.get(model_param.getUdp_con_req_url_parameter()).toString());
+                    deviceUpdate.setUdpConReqUrl(object.get(model_param.getUdpConReqUrlParameter()).toString());
                 } catch (Exception e) {
                 }
                 try {
-                    deviceUpdate.setManagementIp(object.get(model_param.getManagement_ip_parameter()).toString());
+                    deviceUpdate.setManagementIp(object.get(model_param.getManagementIpParameter()).toString());
                 } catch (Exception e) {
                 }
                 try {
-                    deviceUpdate.setPublicIp(object.get(model_param.getPublic_ip_parameter()).toString());
+                    deviceUpdate.setPublicIp(object.get(model_param.getPublicIpParameter()).toString());
                 } catch (Exception e) {
                 }
                 try {
-                    deviceUpdate.setSecondWanMac(object.get(model_param.getSecond_wan_mac()).toString());
+                    deviceUpdate.setSecondWanMac(object.get(model_param.getSecondWanMac()).toString());
                     System.out.println("WAN2 Mac Added");
                 } catch (Exception e) {
                 }
                 try {
-                    deviceUpdate.setHardwareVer(object.get(model_param.getHardware_ver_parameter()).toString());
+                    deviceUpdate.setHardwareVer(object.get(model_param.getHardwareVerParameter()).toString());
                 } catch (Exception e) {
                 }
                 try {
-                    deviceUpdate.setSoftwareVer(object.get(model_param.getSoftware_ver_parameter()).toString());
+                    deviceUpdate.setSoftwareVer(object.get(model_param.getSoftwareVerParameter()).toString());
                 } catch (Exception e) {
                 }
                 try {
-                    deviceUpdate.setConReqUrl(object.get(model_param.getCon_req_url_parameter()).toString());
+                    deviceUpdate.setConReqUrl(object.get(model_param.getConReqUrlParameter()).toString());
                 } catch (Exception e) {
                 }
             }
 
             String DeviceSerialNum = InformData.getElementsByTagName("SerialNumber").item(0).getTextContent();
-            String DeviceMacAddress = object.get(model_param.getMac_address_parameter()).toString();
+            String DeviceMacAddress = object.get(model_param.getMacAddressParameter()).toString();
 
             if (!device_front.findBySerialNumOnRogue(DeviceSerialNum).isEmpty()) {
                 helperService.setDeviceInformInterval(DeviceSerialNum, 10);
                 System.out.println(DeviceMacAddress);
             }
 
-            device dev = device_front.getBySerialNum(InformData.getElementsByTagName("SerialNumber").item(0).getTextContent());
+            Device dev = device_front.getBySerialNum(InformData.getElementsByTagName("SerialNumber").item(0).getTextContent());
             deviceUpdate.setDeviceAlias(dev.getDeviceName());
-            List<group_ssid> ssid = ssidRepo.findByGroup(dev.getParent());
+            List<GroupSsid> ssid = ssidRepo.findByGroup(dev.getParent());
             StringBuilder strb = new StringBuilder();
 
-            for (group_ssid group_ssid : ssid) {
-                strb.append(group_ssid.getssid() + ",");
+            for (GroupSsid group_ssid : ssid) {
+                strb.append(group_ssid.getSsid() + ",");
             }
 
             deviceUpdate.setSsids(strb.toString());
-            // deviceUpdate.set_udp_con_req_url(ClientHost+":"+ClientPort);
+            // deviceUpdate.setUdpConReqUrl(ClientHost+":"+ClientPort);
             deviceUpdate.setCwmpCycleEnd(false);
             devicesRepo.save(deviceUpdate);
         }
@@ -772,7 +772,7 @@ public class hiveController {
             e.printStackTrace();
         }
 
-        device_model_parameters model_param = null;
+        DeviceModelParameters model_param = null;
         try {
             model_param = device_model_parameters_repo.searchByManufacturerAndModel(InformData.getElementsByTagName("Manufacturer").item(0).getTextContent(), InformData.getElementsByTagName("ProductClass").item(0).getTextContent());
         } catch (Exception e) {
@@ -780,12 +780,12 @@ public class hiveController {
         }
 
         if (device_front.findBySerialNum(InformData.getElementsByTagName("SerialNumber").item(0).getTextContent()).isEmpty()) {
-            device unassigned_device = new device();
+            Device unassigned_device = new Device();
             unassigned_device.setSerialNumber(InformData.getElementsByTagName("SerialNumber").item(0).getTextContent());
             if (model_param != null) {
-                unassigned_device.setMacAddress(object.get(model_param.getMac_address_parameter()).toString());
+                unassigned_device.setMacAddress(object.get(model_param.getMacAddressParameter()).toString());
                 try {
-                    unassigned_device.setSecondWanMac(object.get(model_param.getSecond_wan_mac()).toString());
+                    unassigned_device.setSecondWanMac(object.get(model_param.getSecondWanMac()).toString());
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -797,10 +797,10 @@ public class hiveController {
             unassigned_device.setActivated(false);
             device_front.save(unassigned_device);
         } else {
-            device newDevice = device_front.getBySerialNum(InformData.getElementsByTagName("SerialNumber").item(0).getTextContent());
+            Device newDevice = device_front.getBySerialNum(InformData.getElementsByTagName("SerialNumber").item(0).getTextContent());
             newDevice.setSerialNumber(InformData.getElementsByTagName("SerialNumber").item(0).getTextContent());
             if (model_param != null) {
-                newDevice.setMacAddress(object.get(model_param.getMac_address_parameter()).toString());
+                newDevice.setMacAddress(object.get(model_param.getMacAddressParameter()).toString());
             }
             
             newDevice.setModel(InformData.getElementsByTagName("ProductClass").item(0).getTextContent());
@@ -816,7 +816,7 @@ public class hiveController {
     @Async("asyncExecutor")
     @RequestMapping(value = "/MoveDeviceGroup/{SerialNum}") 
     private CompletableFuture<String> MoveDeviceGroup(@PathVariable String SerialNum) {
-        device device_to_bootstrap = device_front.getBySerialNum(SerialNum);
+        Device device_to_bootstrap = device_front.getBySerialNum(SerialNum);
         if (device_to_bootstrap.getStatus().contains("syncing") == false) {
             device_to_bootstrap.setStatus("syncing");
             device_front.save(device_to_bootstrap);

@@ -40,61 +40,61 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.async.DeferredResult;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.acs_tr069.test_tr069.Entity.auto_complete;
-import com.acs_tr069.test_tr069.Entity.client_list;
-import com.acs_tr069.test_tr069.Entity.device;
-import com.acs_tr069.test_tr069.Entity.device_logs;
-import com.acs_tr069.test_tr069.Entity.device_model_parameters;
-import com.acs_tr069.test_tr069.Entity.device_traffic_24h;
-import com.acs_tr069.test_tr069.Entity.device_traffic_daily;
-import com.acs_tr069.test_tr069.Entity.devices;
-import com.acs_tr069.test_tr069.Entity.group_command;
-import com.acs_tr069.test_tr069.Entity.group_ssid;
-import com.acs_tr069.test_tr069.Entity.groups;
-import com.acs_tr069.test_tr069.Entity.radio_info;
-import com.acs_tr069.test_tr069.Repo.auto_completeRepository;
-import com.acs_tr069.test_tr069.Repo.client_listRepository;
-import com.acs_tr069.test_tr069.Repo.device_frontendRepository;
-import com.acs_tr069.test_tr069.Repo.device_logsRepository;
-import com.acs_tr069.test_tr069.Repo.device_model_parametersRepository;
-import com.acs_tr069.test_tr069.Repo.device_traffic_24hRepository;
-import com.acs_tr069.test_tr069.Repo.device_traffic_dailyRepository;
-import com.acs_tr069.test_tr069.Repo.devicesRepository;
-import com.acs_tr069.test_tr069.Repo.group_commandRepo;
-import com.acs_tr069.test_tr069.Repo.groupsRepository;
-import com.acs_tr069.test_tr069.Repo.radio_infoRepository;
-import com.acs_tr069.test_tr069.Repo.ssidRepository;
+import com.acs_tr069.test_tr069.Entity.AutoComplete;
+import com.acs_tr069.test_tr069.Entity.ClientList;
+import com.acs_tr069.test_tr069.Entity.Device;
+import com.acs_tr069.test_tr069.Entity.DeviceLogs;
+import com.acs_tr069.test_tr069.Entity.DeviceModelParameters;
+import com.acs_tr069.test_tr069.Entity.DeviceTraffic24h;
+import com.acs_tr069.test_tr069.Entity.DeviceTrafficDaily;
+import com.acs_tr069.test_tr069.Entity.Devices;
+import com.acs_tr069.test_tr069.Entity.GroupCommand;
+import com.acs_tr069.test_tr069.Entity.GroupSsid;
+import com.acs_tr069.test_tr069.Entity.Groups;
+import com.acs_tr069.test_tr069.Entity.RadioInfo;
+import com.acs_tr069.test_tr069.Repo.AutoCompleteRepository;
+import com.acs_tr069.test_tr069.Repo.ClientListRepository;
+import com.acs_tr069.test_tr069.Repo.DeviceFrontendRepository;
+import com.acs_tr069.test_tr069.Repo.DeviceLogsRepository;
+import com.acs_tr069.test_tr069.Repo.DeviceModelParametersRepository;
+import com.acs_tr069.test_tr069.Repo.DeviceTraffic24hRepository;
+import com.acs_tr069.test_tr069.Repo.DeviceTrafficDailyRepository;
+import com.acs_tr069.test_tr069.Repo.DevicesRepository;
+import com.acs_tr069.test_tr069.Repo.GroupCommandRepository;
+import com.acs_tr069.test_tr069.Repo.GroupsRepository;
+import com.acs_tr069.test_tr069.Repo.RadioInfoRepository;
+import com.acs_tr069.test_tr069.Repo.SsidRepository;
 import com.acs_tr069.test_tr069.Services.HelperService;
 import com.google.common.base.Charsets;
 
 @CrossOrigin(origins = "*")
 @RestController
-public class mainController { // place all hive and zeep apis that arent in conflict with each other here
+public class MainController { // place all hive and zeep apis that arent in conflict with each other here
     
     @Autowired
-    private devicesRepository devicesRepo; 
+    private DevicesRepository devicesRepo; 
     @Autowired
-    private ssidRepository ssidRepo; 
+    private SsidRepository ssidRepo; 
     @Autowired
-    private device_frontendRepository device_front; 
+    private DeviceFrontendRepository device_front; 
     @Autowired
-    private group_commandRepo GroupCommandRepo; 
+    private GroupCommandRepository GroupCommandRepo; 
     @Autowired
-    private groupsRepository group_repo; 
+    private GroupsRepository group_repo; 
     @Autowired
-    private auto_completeRepository auto_completeRepo; 
+    private AutoCompleteRepository auto_completeRepo; 
     @Autowired
-    private radio_infoRepository radio_infoRepo; 
+    private RadioInfoRepository radio_infoRepo; 
     @Autowired
-    private device_logsRepository device_logRepo; 
+    private DeviceLogsRepository device_logRepo; 
     @Autowired
-    private device_traffic_24hRepository dev_traff_24Repo; 
+    private DeviceTraffic24hRepository dev_traff_24Repo; 
     @Autowired
-    private device_traffic_dailyRepository dev_traff_dailyRepo; 
+    private DeviceTrafficDailyRepository dev_traff_dailyRepo; 
     @Autowired
-    private client_listRepository client_listRepo; 
+    private ClientListRepository client_listRepo; 
     @Autowired
-    private device_model_parametersRepository device_model_parameters_repo; 
+    private DeviceModelParametersRepository device_model_parameters_repo; 
     @Autowired
     private HelperService helperService;
 
@@ -134,9 +134,9 @@ public class mainController { // place all hive and zeep apis that arent in conf
 
     @Async("asyncExecutor")
     @RequestMapping(value = "/getradioinfo") 
-    public CompletableFuture<List<radio_info>> getradioinfo(@RequestParam("sn") String sn) throws JSONException {
+    public CompletableFuture<List<RadioInfo>> getradioinfo(@RequestParam("sn") String sn) throws JSONException {
         try {
-            List<radio_info> data = radio_infoRepo.findBySerialNumEquals(sn);
+            List<RadioInfo> data = radio_infoRepo.findBySerialNumEquals(sn);
             return CompletableFuture.completedFuture(data);
         } catch (Exception e) {
             return CompletableFuture.completedFuture(null);
@@ -157,7 +157,7 @@ public class mainController { // place all hive and zeep apis that arent in conf
                     e1.printStackTrace();
                 }
 
-                List<radio_info> device;
+                List<RadioInfo> device;
                 try {
                     device = radio_infoRepo.findBySerialNumEquals(sn);
                 } catch (Exception e) {
@@ -166,25 +166,25 @@ public class mainController { // place all hive and zeep apis that arent in conf
 
                 if (device.isEmpty()) {
                     try {
-                        radio_info newRadioInfo = new radio_info();
-                        newRadioInfo.setsn(sn);
-                        newRadioInfo.setuploadTime(uploadTime);
-                        newRadioInfo.setradioIndex(current_data.getString("radioIndex").toString());
-                        newRadioInfo.setchannel(current_data.getString("channel").toString());
-                        newRadioInfo.setgatherTime(current_data.getString("gatherTime").toString());
-                        newRadioInfo.setutilization(current_data.getString("utilization").toString());
-                        newRadioInfo.setpower(current_data.getString("power").toString());
-                        newRadioInfo.setbandWidth(current_data.getString("bandWidth").toString());
+                        RadioInfo newRadioInfo = new RadioInfo();
+                        newRadioInfo.setSn(sn);
+                        newRadioInfo.setUploadTime(uploadTime);
+                        newRadioInfo.setRadioIndex(current_data.getString("radioIndex").toString());
+                        newRadioInfo.setChannel(current_data.getString("channel").toString());
+                        newRadioInfo.setGatherTime(current_data.getString("gatherTime").toString());
+                        newRadioInfo.setUtilization(current_data.getString("utilization").toString());
+                        newRadioInfo.setPower(current_data.getString("power").toString());
+                        newRadioInfo.setBandWidth(current_data.getString("bandWidth").toString());
                         radio_infoRepo.save(newRadioInfo);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
                 } else {
                     Boolean already_exist = false;
-                    radio_info tobe_saved = null;
+                    RadioInfo tobe_saved = null;
                     try {
-                        for (radio_info radio_info : device) {
-                            if (radio_info.getradioIndex().contentEquals(current_data.getString("radioIndex").toString())) {
+                        for (RadioInfo radio_info : device) {
+                            if (radio_info.getRadioIndex().contentEquals(current_data.getString("radioIndex").toString())) {
                                 tobe_saved = radio_info;
                                 already_exist = true;
                                 break;
@@ -194,25 +194,25 @@ public class mainController { // place all hive and zeep apis that arent in conf
                         }
                         System.out.println(already_exist);
                         if (already_exist) {
-                            tobe_saved.setsn(sn);
-                            tobe_saved.setuploadTime(uploadTime);
-                            tobe_saved.setradioIndex(current_data.getString("radioIndex").toString());
-                            tobe_saved.setchannel(current_data.getString("channel").toString());
-                            tobe_saved.setgatherTime(current_data.getString("gatherTime").toString());
-                            tobe_saved.setutilization(current_data.getString("utilization").toString());
-                            tobe_saved.setpower(current_data.getString("power").toString());
-                            tobe_saved.setbandWidth(current_data.getString("bandWidth").toString());
+                            tobe_saved.setSn(sn);
+                            tobe_saved.setUploadTime(uploadTime);
+                            tobe_saved.setRadioIndex(current_data.getString("radioIndex").toString());
+                            tobe_saved.setChannel(current_data.getString("channel").toString());
+                            tobe_saved.setGatherTime(current_data.getString("gatherTime").toString());
+                            tobe_saved.setUtilization(current_data.getString("utilization").toString());
+                            tobe_saved.setPower(current_data.getString("power").toString());
+                            tobe_saved.setBandWidth(current_data.getString("bandWidth").toString());
                             radio_infoRepo.save(tobe_saved);
                         } else {
-                            radio_info newRadioInfo = new radio_info();
-                            newRadioInfo.setsn(sn);
-                            newRadioInfo.setuploadTime(uploadTime);
-                            newRadioInfo.setradioIndex(current_data.getString("radioIndex").toString());
-                            newRadioInfo.setchannel(current_data.getString("channel").toString());
-                            newRadioInfo.setgatherTime(current_data.getString("gatherTime").toString());
-                            newRadioInfo.setutilization(current_data.getString("utilization").toString());
-                            newRadioInfo.setpower(current_data.getString("power").toString());
-                            newRadioInfo.setbandWidth(current_data.getString("bandWidth").toString());
+                            RadioInfo newRadioInfo = new RadioInfo();
+                            newRadioInfo.setSn(sn);
+                            newRadioInfo.setUploadTime(uploadTime);
+                            newRadioInfo.setRadioIndex(current_data.getString("radioIndex").toString());
+                            newRadioInfo.setChannel(current_data.getString("channel").toString());
+                            newRadioInfo.setGatherTime(current_data.getString("gatherTime").toString());
+                            newRadioInfo.setUtilization(current_data.getString("utilization").toString());
+                            newRadioInfo.setPower(current_data.getString("power").toString());
+                            newRadioInfo.setBandWidth(current_data.getString("bandWidth").toString());
                             radio_infoRepo.save(newRadioInfo);
                         }
                     } catch (Exception e) {
@@ -314,7 +314,7 @@ public class mainController { // place all hive and zeep apis that arent in conf
                 }
                 if (string.contains("system")) {
                     try {
-                        devices current_device = devicesRepo.getBySerialNum(serial_num);
+                        Devices current_device = devicesRepo.getBySerialNum(serial_num);
                         current_device.setCpuUsage(jsondata.getString("cpu_rate"));
                         current_device.setMemoryUsage(jsondata.getString("memory_rate"));
                         devicesRepo.save(current_device);
@@ -325,53 +325,53 @@ public class mainController { // place all hive and zeep apis that arent in conf
 
                 if (string.contains("offdrop")) {
                     try {
-                        List<device_logs> logs = device_logRepo.findBySerialNumEquals(serial_num);
+                        List<DeviceLogs> logs = device_logRepo.findBySerialNumEquals(serial_num);
                         if (logs.isEmpty()) {
                             DateTimeFormatter dt_date = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
                             LocalDateTime now = LocalDateTime.now();
-                            device_logs dev_log = new device_logs();
-                            dev_log.setserial_num(serial_num);
-                            dev_log.setupdate_time(dt_date.format(now));
-                            dev_log.setontime(jsondata.getString("on_time"));
-                            dev_log.setofftime(jsondata.getString("off_time"));
-                            dev_log.setreason(jsondata.getString("off_reason"));
+                            DeviceLogs dev_log = new DeviceLogs();
+                            dev_log.setSerialNum(serial_num);
+                            dev_log.setUpdateTime(dt_date.format(now));
+                            dev_log.setOntime(jsondata.getString("on_time"));
+                            dev_log.setOfftime(jsondata.getString("off_time"));
+                            dev_log.setReason(jsondata.getString("off_reason"));
 
                             if (jsondata.getString("off_reason").contains("reload")) {
-                                dev_log.settype("reload");
+                                dev_log.setType("reload");
                             }
                             if (jsondata.getString("off_reason").contains("online")) {
-                                dev_log.settype("online");
+                                dev_log.setType("online");
                             }
                             if (jsondata.getString("off_reason").contains("offline")) {
-                                dev_log.settype("offline");
+                                dev_log.setType("offline");
                             }
                             if (jsondata.getString("off_reason").contains("restart")) {
-                                dev_log.settype("restart");
+                                dev_log.setType("restart");
                             }
                             System.out.println(dev_log);
                             device_logRepo.save(dev_log);
                         }
-                        if (!logs.get(0).getreason().contains(jsondata.getString("off_reason"))) {
+                        if (!logs.get(0).getReason().contains(jsondata.getString("off_reason"))) {
                             DateTimeFormatter dt_date = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
                             LocalDateTime now = LocalDateTime.now();
-                            device_logs dev_log = new device_logs();
-                            dev_log.setserial_num(serial_num);
-                            dev_log.setupdate_time(dt_date.format(now));
-                            dev_log.setontime(jsondata.getString("on_time"));
-                            dev_log.setofftime(jsondata.getString("off_time"));
-                            dev_log.setreason(jsondata.getString("off_reason"));
+                            DeviceLogs dev_log = new DeviceLogs();
+                            dev_log.setSerialNum(serial_num);
+                            dev_log.setUpdateTime(dt_date.format(now));
+                            dev_log.setOntime(jsondata.getString("on_time"));
+                            dev_log.setOfftime(jsondata.getString("off_time"));
+                            dev_log.setReason(jsondata.getString("off_reason"));
 
                             if (jsondata.getString("off_reason").contains("reload")) {
-                                dev_log.settype("reload");
+                                dev_log.setType("reload");
                             }
                             if (jsondata.getString("off_reason").contains("online")) {
-                                dev_log.settype("online");
+                                dev_log.setType("online");
                             }
                             if (jsondata.getString("off_reason").contains("offline")) {
-                                dev_log.settype("offline");
+                                dev_log.setType("offline");
                             }
                             if (jsondata.getString("off_reason").contains("restart")) {
-                                dev_log.settype("restart");
+                                dev_log.setType("restart");
                             }
                             System.out.println(dev_log);
                             device_logRepo.save(dev_log);
@@ -395,15 +395,15 @@ public class mainController { // place all hive and zeep apis that arent in conf
                                 tx = tx + data_obj.getInt("tx_bytes");
                             }
                         }
-                        device_traffic_24h flow = new device_traffic_24h();
-                        flow.setserial_num(serial_num);
+                        DeviceTraffic24h flow = new DeviceTraffic24h();
+                        flow.setSerialNum(serial_num);
                         DateTimeFormatter dt_date = DateTimeFormatter.ofPattern("yyyy/MM/dd");
                         DateTimeFormatter dt_time = DateTimeFormatter.ofPattern("HH:mm:ss");
                         LocalDateTime now = LocalDateTime.now();
-                        flow.setdate(dt_date.format(now));
-                        flow.settime(dt_time.format(now));
-                        flow.setrx((rx / 1024) / 1024);
-                        flow.settx((tx / 1024) / 1024);
+                        flow.setDate(dt_date.format(now));
+                        flow.setTime(dt_time.format(now));
+                        flow.setRx((rx / 1024) / 1024);
+                        flow.setTx((tx / 1024) / 1024);
                         dev_traff_24Repo.save(flow);
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -427,22 +427,22 @@ public class mainController { // place all hive and zeep apis that arent in conf
     
     @Async("asyncExecutor")
     @RequestMapping(value = "/getdevicelogs") 
-    public CompletableFuture<List<device_logs>> get_dev_log(@RequestParam("sn") String sn) {
-        List<device_logs> logs = device_logRepo.findBySerialNumEquals(sn);
+    public CompletableFuture<List<DeviceLogs>> get_dev_log(@RequestParam("sn") String sn) {
+        List<DeviceLogs> logs = device_logRepo.findBySerialNumEquals(sn);
         return CompletableFuture.completedFuture(logs);
     }
 
     @Async("asyncExecutor")
     @RequestMapping(value = "/getdevicedetails") 
-    public CompletableFuture<devices> get_dev_details(@RequestParam("sn") String sn) {
-        devices device_details = devicesRepo.getBySerialNum(sn);
+    public CompletableFuture<Devices> get_dev_details(@RequestParam("sn") String sn) {
+        Devices device_details = devicesRepo.getBySerialNum(sn);
         return CompletableFuture.completedFuture(device_details);
     }
 
     @Async("asyncExecutor")
     @RequestMapping(value = "/getdevice24htraffic") 
-    public CompletableFuture<List<device_traffic_24h>> get_dev_traffic(@RequestParam("sn") String sn) {
-        List<device_traffic_24h> device_traffic_24hs = dev_traff_24Repo.findBySerialNumEquals(sn);
+    public CompletableFuture<List<DeviceTraffic24h>> get_dev_traffic(@RequestParam("sn") String sn) {
+        List<DeviceTraffic24h> device_traffic_24hs = dev_traff_24Repo.findBySerialNumEquals(sn);
         return CompletableFuture.completedFuture(device_traffic_24hs);
     }
 
@@ -452,23 +452,23 @@ public class mainController { // place all hive and zeep apis that arent in conf
             DateTimeFormatter dt_date = DateTimeFormatter.ofPattern("yyyy/MM/dd");
             LocalDateTime now = LocalDateTime.now();
             String current_date = dt_date.format(now);
-            Iterable<device> divices = device_front.findAll();
-            for (device device : divices) {
+            Iterable<Device> divices = device_front.findAll();
+            for (Device device : divices) {
                 int rx = 0;
                 int tx = 0;
-                List<device_traffic_24h> dev_traffic_data = dev_traff_24Repo.findBySerialNumEquals(device.getSerialNumber());
-                for (device_traffic_24h device_traffic : dev_traffic_data) {
-                    if (device_traffic.getdate().contains(current_date)) {
-                        rx = rx + device_traffic.getrx();
-                        tx = tx + device_traffic.gettx();
+                List<DeviceTraffic24h> dev_traffic_data = dev_traff_24Repo.findBySerialNumEquals(device.getSerialNumber());
+                for (DeviceTraffic24h device_traffic : dev_traffic_data) {
+                    if (device_traffic.getDate().contains(current_date)) {
+                        rx = rx + device_traffic.getRx();
+                        tx = tx + device_traffic.getTx();
                         dev_traff_24Repo.delete(device_traffic);
                     }
                 }
-                device_traffic_daily traffic_daily = new device_traffic_daily();
-                traffic_daily.setserial_num(device.getSerialNumber());
-                traffic_daily.setdate(current_date);
-                traffic_daily.setrx((rx / 1024) / 1024);
-                traffic_daily.settx((tx / 1024) / 1024);
+                DeviceTrafficDaily traffic_daily = new DeviceTrafficDaily();
+                traffic_daily.setSerialNum(device.getSerialNumber());
+                traffic_daily.setDate(current_date);
+                traffic_daily.setRx((rx / 1024) / 1024);
+                traffic_daily.setTx((tx / 1024) / 1024);
                 dev_traff_dailyRepo.save(traffic_daily);
             }
         }).start();
@@ -476,33 +476,33 @@ public class mainController { // place all hive and zeep apis that arent in conf
 
     @Async("asyncExecutor")
     @RequestMapping(value = "getdevice-daily-traffic") 
-    public CompletableFuture<List<device_traffic_daily>> get_daily_traffic(@RequestParam("sn") String sn, @RequestParam("days") Integer days) {
-        List<device_traffic_daily> traffic = dev_traff_dailyRepo.findBySerialNumEquals(sn);
+    public CompletableFuture<List<DeviceTrafficDaily>> get_daily_traffic(@RequestParam("sn") String sn, @RequestParam("days") Integer days) {
+        List<DeviceTrafficDaily> traffic = dev_traff_dailyRepo.findBySerialNumEquals(sn);
         return CompletableFuture.completedFuture(traffic);
     }
 
     @Async("asyncExecutor")
     @RequestMapping(value = "/setdevicedailytraffic") 
-    public CompletableFuture<device_traffic_daily> set_daily_traffic(@RequestParam("sn") String sn, @RequestParam("date") String date, @RequestParam("rx") Integer rx, @RequestParam("tx") Integer tx) {
-        device_traffic_daily traffic = new device_traffic_daily();
-        traffic.setserial_num(sn);
-        traffic.setdate(date);
-        traffic.setrx(rx);
-        traffic.settx(tx);
+    public CompletableFuture<DeviceTrafficDaily> set_daily_traffic(@RequestParam("sn") String sn, @RequestParam("date") String date, @RequestParam("rx") Integer rx, @RequestParam("tx") Integer tx) {
+        DeviceTrafficDaily traffic = new DeviceTrafficDaily();
+        traffic.setSerialNum(sn);
+        traffic.setDate(date);
+        traffic.setRx(rx);
+        traffic.setTx(tx);
         dev_traff_dailyRepo.save(traffic);
         return CompletableFuture.completedFuture(traffic);
     }
 
     @Async("asyncExecutor")
     @RequestMapping(value = "/getclient_list") 
-    public CompletableFuture<List<client_list>> getclient_list(@RequestParam("sn") String sn) {
-        List<client_list> client_list = client_listRepo.findBySerialNumEquals(sn);
+    public CompletableFuture<List<ClientList>> getclient_list(@RequestParam("sn") String sn) {
+        List<ClientList> client_list = client_listRepo.findBySerialNumEquals(sn);
         return CompletableFuture.completedFuture(client_list);
     }
 
     @Async("asyncExecutor")
     @RequestMapping(value = "/setclient_list") 
-    public CompletableFuture<client_list> setclient_list(
+    public CompletableFuture<ClientList> setclient_list(
             @RequestParam("sn") String sn,
             @RequestParam("ip") String ip,
             @RequestParam("macc") String macc,
@@ -514,18 +514,18 @@ public class mainController { // place all hive and zeep apis that arent in conf
             @RequestParam("manufacturer") String manufacturer,
             @RequestParam("up") String up,
             @RequestParam("down") String down) {
-        client_list client = new client_list();
-        client.setserial_num(sn);
-        client.setip(ip);
-        client.setmacc(macc);
-        client.setssid(ssid);
-        client.setrssi(rssi);
-        client.setband(band);
-        client.settraffic(traffic);
-        client.setos(os);
-        client.setmanufacturer(manufacturer);
-        client.setup(up);
-        client.setdown(down);
+        ClientList client = new ClientList();
+        client.setSerialNum(sn);
+        client.setIp(ip);
+        client.setMacc(macc);
+        client.setSsid(ssid);
+        client.setRssi(rssi);
+        client.setBand(band);
+        client.setTraffic(traffic);
+        client.setOs(os);
+        client.setManufacturer(manufacturer);
+        client.setUp(up);
+        client.setDown(down);
         client_listRepo.save(client);
 
         return CompletableFuture.completedFuture(client);
@@ -536,17 +536,17 @@ public class mainController { // place all hive and zeep apis that arent in conf
     @RequestMapping(value = "/ExecuteGroupCommand/{SerialNum}, {ID}") 
     public CompletableFuture<String> ExecuteGroupCommand(@PathVariable String SerialNum, @PathVariable String ID) {
         Long id = Long.parseLong(ID);
-        group_command current_command = GroupCommandRepo.getByID(id);
-        device DevicesInGroup = device_front.getBySerialNum(SerialNum);
+        GroupCommand current_command = GroupCommandRepo.getByID(id);
+        Device DevicesInGroup = device_front.getBySerialNum(SerialNum);
 
-        String[] command_in_line = current_command.getcommand().split("\n", -1);
+        String[] command_in_line = current_command.getCommand().split("\n", -1);
         StringBuilder sb = new StringBuilder();
         sb.append("{");
         for (int j = 0; j < command_in_line.length; j++) {
             sb.append(",Command:" + command_in_line[j]);
         }
         sb.append(",}");
-        if (current_command.getmodel().contains("ALL")) {
+        if (current_command.getModel().contains("ALL")) {
             DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
             LocalDateTime now = LocalDateTime.now();
 
@@ -556,7 +556,7 @@ public class mainController { // place all hive and zeep apis that arent in conf
             helperService.SaveTask(DevicesInGroup.getSerialNumber(), "Command", sb.toString(), "config");
         } else {
             String deviceModel = DevicesInGroup.getModel();
-            if (current_command.getmodel().contains(deviceModel)) {
+            if (current_command.getModel().contains(deviceModel)) {
                 DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
                 LocalDateTime now = LocalDateTime.now();
 
@@ -572,7 +572,7 @@ public class mainController { // place all hive and zeep apis that arent in conf
     @Async("asyncExecutor")
     @RequestMapping(value = "/AddSSID/{SerialNum}, {ID}") 
     public CompletableFuture<String> AddSSID(@PathVariable String SerialNum, @PathVariable String ID) {
-        device current_device = device_front.getBySerialNum(SerialNum);
+        Device current_device = device_front.getBySerialNum(SerialNum);
 
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
         LocalDateTime now = LocalDateTime.now();
@@ -581,12 +581,12 @@ public class mainController { // place all hive and zeep apis that arent in conf
         device_front.save(current_device);
 
         Long id = Long.parseLong(ID);
-        group_ssid ssid_to_add = ssidRepo.getByID(id);
-        Integer wlan_id = ssid_to_add.getwlan_id();
+        GroupSsid ssid_to_add = ssidRepo.getByID(id);
+        Integer wlan_id = ssid_to_add.getWlanId();
 
         StringBuilder SSIDSettings = new StringBuilder();
         String encryptionMode = null;
-        String encrypModetoConvert = ssid_to_add.getencryption_mode();
+        String encrypModetoConvert = ssid_to_add.getEncryptionMode();
 
         if (encrypModetoConvert.contains("Open")) {
             encryptionMode = "None";
@@ -598,36 +598,36 @@ public class mainController { // place all hive and zeep apis that arent in conf
             encryptionMode = "WPA2-Personal";
         }
 
-        SSIDSettings.append("{,Device.WiFi.SSID." + wlan_id + ".SSID:" + ssid_to_add.getssid());
+        SSIDSettings.append("{,Device.WiFi.SSID." + wlan_id + ".SSID:" + ssid_to_add.getSsid());
         SSIDSettings.append(",Device.WiFi.SSID." + wlan_id + ".LowerLayers:1&2");
-        if (ssid_to_add.getforward_mode().contains("Nat")) {
+        if (ssid_to_add.getForwardMode().contains("Nat")) {
             SSIDSettings.append(",Device.WiFi.SSID." + wlan_id + ".X_WWW-RUIJIE-COM-CN_IsHidden:true");
         } else {
             SSIDSettings.append(",Device.WiFi.SSID." + wlan_id + ".X_WWW-RUIJIE-COM-CN_IsHidden:false");
         }
-        SSIDSettings.append(",Device.WiFi.SSID." + wlan_id + ".X_WWW-RUIJIE-COM-CN_FowardType:" + ssid_to_add.getforward_mode());
+        SSIDSettings.append(",Device.WiFi.SSID." + wlan_id + ".X_WWW-RUIJIE-COM-CN_FowardType:" + ssid_to_add.getForwardMode());
 
-        if (ssid_to_add.getforward_mode().contains("Bridge")) {
-            SSIDSettings.append(",Device.WiFi.SSID." + wlan_id + ".X_WWW-RUIJIE-COM-CN_VLANID:" + ssid_to_add.getvlan_id());
+        if (ssid_to_add.getForwardMode().contains("Bridge")) {
+            SSIDSettings.append(",Device.WiFi.SSID." + wlan_id + ".X_WWW-RUIJIE-COM-CN_VLANID:" + ssid_to_add.getVlanId());
         }
         SSIDSettings.append(",Device.WiFi.AccessPoint." + wlan_id + ".Security.ModeEnabled:" + encryptionMode);
         if (encryptionMode.contains("None") == false) {
-            SSIDSettings.append(",Device.WiFi.AccessPoint." + wlan_id + ".Security.KeyPassphrase:" + ssid_to_add.getpassphrase() + ",}");
+            SSIDSettings.append(",Device.WiFi.AccessPoint." + wlan_id + ".Security.KeyPassphrase:" + ssid_to_add.getPassphrase() + ",}");
         } else {
             SSIDSettings.append(",}");
         }
         
         helperService.AddNewSSID(SSIDSettings.toString(), SerialNum, wlan_id.toString());
 
-        if (ssid_to_add.getauth()) {
+        if (ssid_to_add.isAuth()) {
             StringBuilder AuthSettings = new StringBuilder();
             AuthSettings.append("{,WiFiDog");
-            AuthSettings.append("," + ssid_to_add.getportal_ip());
-            AuthSettings.append("," + ssid_to_add.getportal_url());
+            AuthSettings.append("," + ssid_to_add.getPortalIp());
+            AuthSettings.append("," + ssid_to_add.getPortalUrl());
             AuthSettings.append(",js");
-            AuthSettings.append("," + ssid_to_add.getgateway_id());
+            AuthSettings.append("," + ssid_to_add.getGatewayId());
             AuthSettings.append(",true");
-            AuthSettings.append("," + ssid_to_add.getseamless() + ",}");
+            AuthSettings.append("," + ssid_to_add.isSeamless() + ",}");
 
             helperService.AddNewAuth(AuthSettings.toString(), SerialNum, wlan_id.toString());
         }
@@ -694,20 +694,20 @@ public class mainController { // place all hive and zeep apis that arent in conf
 
     @Async("asyncExecutor")
     @RequestMapping(value = "/GetRogueDevices")
-    public CompletableFuture<List<device>> GetRougeDevices() { 
-        List<device> roguedevices = device_front.findByGroup("unassigned");
+    public CompletableFuture<List<Device>> GetRougeDevices() { 
+        List<Device> roguedevices = device_front.findByGroup("unassigned");
         return CompletableFuture.completedFuture(roguedevices);
     }
 
     @Async("asyncExecutor")
     @RequestMapping(value = "/CheckParentGroup")
     public CompletableFuture<String> CheckParentGroup(@RequestBody String parent) { 
-        List<groups> groups = group_repo.findByParent(parent);
+        List<Groups> groups = group_repo.findByParent(parent);
         if (groups.size() > 0) {
             StringBuilder sb = new StringBuilder();
             sb.append("{,");
-            for (groups groups2 : groups) {
-                sb.append(groups2.getgroup_name() + ",");
+            for (Groups groups2 : groups) {
+                sb.append(groups2.getGroupName() + ",");
             }
             sb.append("}");
             return CompletableFuture.completedFuture(sb.toString());
@@ -746,16 +746,16 @@ public class mainController { // place all hive and zeep apis that arent in conf
             String body = "";
             String[] modez = Modes.split(",", -1);
             String ObjectName = modez[7];
-            devices current_device = devicesRepo.getBySerialNum(SerialNum);
+            Devices current_device = devicesRepo.getBySerialNum(SerialNum);
             String deviceModel = current_device.getModel();
-            List<auto_complete> suggestion_lists = auto_completeRepo.findByDeviceModel(deviceModel);
+            List<AutoComplete> suggestion_lists = auto_completeRepo.findByDeviceModel(deviceModel);
             boolean found = false;
             if (!suggestion_lists.isEmpty()) {
-                for (auto_complete auto_complete : suggestion_lists) {
-                    System.out.println("from db" + auto_complete.get_command());
+                for (AutoComplete auto_complete : suggestion_lists) {
+                    System.out.println("from db" + auto_complete.getCommand());
                     System.out.println("from ObjName" + ObjectName);
-                    if (ObjectName.contains(auto_complete.get_command())) {
-                        body = new String(auto_complete.get_suggestion_list(), Charsets.UTF_8);
+                    if (ObjectName.contains(auto_complete.getCommand())) {
+                        body = new String(auto_complete.getSuggestionList(), Charsets.UTF_8);
                         found = true;
                         result.setResult(ResponseEntity.status(HttpStatus.OK).contentType(MediaType.TEXT_PLAIN).body(body));
                     }
@@ -774,10 +774,10 @@ public class mainController { // place all hive and zeep apis that arent in conf
                         }
                     }
                     try {
-                        auto_complete NewSuggestion = new auto_complete();
-                        NewSuggestion.set_device_model(deviceModel);
-                        NewSuggestion.set_command(ObjectName);
-                        NewSuggestion.set_suggestion_list(body.getBytes(Charsets.UTF_8));
+                        AutoComplete NewSuggestion = new AutoComplete();
+                        NewSuggestion.setDeviceModel(deviceModel);
+                        NewSuggestion.setCommand(ObjectName);
+                        NewSuggestion.setSuggestionList(body.getBytes(Charsets.UTF_8));
                         auto_completeRepo.save(NewSuggestion);
                     } catch (Exception e) {
                         System.out.println(e);
@@ -798,10 +798,10 @@ public class mainController { // place all hive and zeep apis that arent in conf
                         }
                     }
                     try {
-                        auto_complete NewSuggestion = new auto_complete();
-                        NewSuggestion.set_device_model(deviceModel);
-                        NewSuggestion.set_command(ObjectName);
-                        NewSuggestion.set_suggestion_list(body.getBytes(Charsets.UTF_8));
+                        AutoComplete NewSuggestion = new AutoComplete();
+                        NewSuggestion.setDeviceModel(deviceModel);
+                        NewSuggestion.setCommand(ObjectName);
+                        NewSuggestion.setSuggestionList(body.getBytes(Charsets.UTF_8));
                         auto_completeRepo.save(NewSuggestion);
                     } catch (Exception e) {
                         System.out.println(e);
@@ -815,99 +815,100 @@ public class mainController { // place all hive and zeep apis that arent in conf
     
     @Async("asyncExecutor")
     @GetMapping("/getssid")
-    public CompletableFuture<Iterable<group_ssid>> getAllCustomers() { 
-        List<group_ssid> customers = new ArrayList<>();
+    public CompletableFuture<Iterable<GroupSsid>> getAllCustomers() { 
+        List<GroupSsid> customers = new ArrayList<>();
         ssidRepo.findAll().forEach(customers::add);
         return CompletableFuture.completedFuture(customers);
     }
 
     @Async("asyncExecutor")
     @GetMapping("/getgroup")
-    public CompletableFuture<List<groups>> getAllGroups() { 
-        List<groups> customers = new ArrayList<>();
+    public CompletableFuture<List<Groups>> getAllGroups() { 
+        List<Groups> customers = new ArrayList<>();
         group_repo.findAll().forEach(customers::add);
         return CompletableFuture.completedFuture(customers);
     }
 
     @Async("asyncExecutor")
     @GetMapping("/getdevice")
-    public CompletableFuture<List<device>> getAllDevice() { 
-        List<device> Device = new ArrayList<>();
+    public CompletableFuture<List<Device>> getAllDevice() { 
+        List<Device> Device = new ArrayList<>();
         device_front.findAll().forEach(Device::add);
         return CompletableFuture.completedFuture(Device);
     }
 
     @Async("asyncExecutor")
     @GetMapping("/getcommand")
-    public CompletableFuture<List<group_command>> getAllCommands() { 
-        List<group_command> commands = new ArrayList<>();
+    public CompletableFuture<List<GroupCommand>> getAllCommands() { 
+        List<GroupCommand> commands = new ArrayList<>();
         GroupCommandRepo.findAll().forEach(commands::add);
         return CompletableFuture.completedFuture(commands);
     }
 
     @Async("asyncExecutor")
     @PostMapping("/adddevice")
-    public CompletableFuture<device> postGroup(@RequestBody device DEVICE) { 
-        device Device = device_front.save(new device(DEVICE.getDeviceName(), DEVICE.getMacAddress(), DEVICE.getSerialNumber(), DEVICE.getLocation(), DEVICE.getParent(), DEVICE.getDateCreated(), DEVICE.getDateModified(), DEVICE.getDateOffline(), DEVICE.getStatus(), DEVICE.getModel(), DEVICE.getDeviceType()));
+    public CompletableFuture<Device> postGroup(@RequestBody Device DEVICE) { 
+        Device Device = device_front.save(new Device(DEVICE.getDeviceName(), DEVICE.getMacAddress(), DEVICE.getSerialNumber(), DEVICE.getLocation(), DEVICE.getParent(), DEVICE.getDateCreated(), DEVICE.getDateModified(), DEVICE.getDateOffline(), DEVICE.getStatus(), DEVICE.getModel(), DEVICE.getDeviceType()));
         return CompletableFuture.completedFuture(Device);
     }
 
     @Async("asyncExecutor")
     @PostMapping("/addgroup")
-    public CompletableFuture<groups> postGroup(@RequestBody groups GROUP) { 
-        groups GroupS = group_repo.save(new groups(GROUP.getgroup_name(), GROUP.getlocation(), GROUP.getparent(), GROUP.getchild(), GROUP.getdate_created(), GROUP.getdate_modified()));
+    public CompletableFuture<Groups> postGroup(@RequestBody Groups GROUP) { 
+        Groups GroupS = group_repo.save(new Groups(GROUP.getGroupName(), GROUP.getLocation(), GROUP.getParent(), GROUP.getChild(), GROUP.getDateCreated(), GROUP.getDateModified()));
         return CompletableFuture.completedFuture(GroupS);
     }
 
     @Async("asyncExecutor")
     @PostMapping("/addcommand")
-    public CompletableFuture<group_command> postCommand(@RequestBody group_command COMMAND) { 
-        group_command Commands = GroupCommandRepo.save(new group_command(COMMAND.getmodel(), COMMAND.getdescription(), COMMAND.getparent(), COMMAND.getcommand()));
+    public CompletableFuture<GroupCommand> postCommand(@RequestBody GroupCommand COMMAND) { 
+        GroupCommand Commands = GroupCommandRepo.save(new GroupCommand(COMMAND.getModel(), COMMAND.getDescription(), COMMAND.getParent(), COMMAND.getCommand()));
         return CompletableFuture.completedFuture(Commands);
     }
 
     @Async("asyncExecutor")
     @PostMapping("/addssid")
-    public CompletableFuture<group_ssid> postSSID(@RequestBody group_ssid ssID) {  
-        group_ssid _ssid = ssidRepo.save(new group_ssid(ssID.getssid(),
-                ssID.getforward_mode(),
-                ssID.getvlan_id(),
-                ssID.getwlan_id(),
-                ssID.getencryption_mode(),
-                ssID.getpassphrase(),
-                ssID.getlimitless(),
-                ssID.getuplink(),
-                ssID.getdownlink(),
-                ssID.getauth(),
-                ssID.getportal_url(),
-                ssID.getportal_ip(),
-                ssID.getparent(),
-                ssID.getgateway_id(),
-                ssID.getseamless()));
+    public CompletableFuture<GroupSsid> postSSID(@RequestBody GroupSsid ssID) {  
+        GroupSsid _ssid = ssidRepo.save(new GroupSsid(
+                ssID.getSsid(),
+                ssID.getForwardMode(),
+                ssID.getVlanId(),
+                ssID.getWlanId(),
+                ssID.getEncryptionMode(),
+                ssID.getPassphrase(),
+                ssID.isLimitless(),
+                ssID.getUplink(),
+                ssID.getDownlink(),
+                ssID.isAuth(),
+                ssID.getPortalUrl(),
+                ssID.getPortalIp(),
+                ssID.getParent(),
+                ssID.getGatewayId(),
+                ssID.isSeamless()));
         return CompletableFuture.completedFuture(_ssid);
     }
 
     @Async("asyncExecutor")
     @PutMapping("/updatessid/{id}")
-    public CompletableFuture<ResponseEntity<group_ssid>> updateCustomer(@PathVariable("id") long id, @RequestBody group_ssid ssID) { 
-        Optional<group_ssid> customerData = ssidRepo.findById(id);
+    public CompletableFuture<ResponseEntity<GroupSsid>> updateCustomer(@PathVariable("id") long id, @RequestBody GroupSsid ssID) { 
+        Optional<GroupSsid> customerData = ssidRepo.findById(id);
         if (customerData.isPresent()) {
-            group_ssid _ssid = customerData.get();
-            _ssid.setssid(ssID.getssid());
-            _ssid.setforward_mode(ssID.getforward_mode());
-            _ssid.setvlan_id(ssID.getvlan_id());
-            _ssid.setwlan_id(ssID.getwlan_id());
-            _ssid.setencryption_mode(ssID.getencryption_mode());
-            _ssid.setpassphrase(ssID.getpassphrase());
-            _ssid.setlimitless(ssID.getlimitless());
-            _ssid.setuplink(ssID.getuplink());
-            _ssid.setdownlink(ssID.getdownlink());
-            _ssid.setauth(ssID.getauth());
-            _ssid.setportal_url(ssID.getportal_url());
-            _ssid.setportal_ip(ssID.getportal_ip());
-            _ssid.setparent(ssID.getparent());
-            _ssid.setgateway_id(ssID.getgateway_id());
-            _ssid.setseamless(ssID.getseamless());
+            GroupSsid _ssid = customerData.get();
+            _ssid.setSsid(ssID.getSsid());
+            _ssid.setForwardMode(ssID.getForwardMode());
+            _ssid.setVlanId(ssID.getVlanId());
+            _ssid.setWlanId(ssID.getWlanId());
+            _ssid.setEncryptionMode(ssID.getEncryptionMode());
+            _ssid.setPassphrase(ssID.getPassphrase());
+            _ssid.setLimitless(ssID.isLimitless());
+            _ssid.setUplink(ssID.getUplink());
+            _ssid.setDownlink(ssID.getDownlink());
+            _ssid.setAuth(ssID.isAuth());
+            _ssid.setPortalUrl(ssID.getPortalUrl());
+            _ssid.setPortalIp(ssID.getPortalIp());
+            _ssid.setParent(ssID.getParent());
+            _ssid.setGatewayId(ssID.getGatewayId());
+            _ssid.setSeamless(ssID.isSeamless());
             return CompletableFuture.completedFuture(new ResponseEntity<>(ssidRepo.save(_ssid), HttpStatus.OK));
         } else {
             return CompletableFuture.completedFuture(new ResponseEntity<>(HttpStatus.NOT_FOUND));
@@ -916,14 +917,14 @@ public class mainController { // place all hive and zeep apis that arent in conf
 
     @Async("asyncExecutor")
     @PutMapping("/updatecommand/{id}")
-    public CompletableFuture<ResponseEntity<group_command>> updateCommand(@PathVariable("id") long id, @RequestBody group_command Command) { 
-        Optional<group_command> commandData = GroupCommandRepo.findById(id);
+    public CompletableFuture<ResponseEntity<GroupCommand>> updateCommand(@PathVariable("id") long id, @RequestBody GroupCommand Command) { 
+        Optional<GroupCommand> commandData = GroupCommandRepo.findById(id);
         if (commandData.isPresent()) {
-            group_command _command = commandData.get();
-            _command.setmodel(Command.getmodel());
-            _command.setparent(Command.getparent());
-            _command.setdescription(Command.getdescription());
-            _command.setcommand(Command.getcommand());
+            GroupCommand _command = commandData.get();
+            _command.setModel(Command.getModel());
+            _command.setParent(Command.getParent());
+            _command.setDescription(Command.getDescription());
+            _command.setCommand(Command.getCommand());
             return CompletableFuture.completedFuture(new ResponseEntity<>(GroupCommandRepo.save(_command), HttpStatus.OK));
         } else {
             return CompletableFuture.completedFuture(new ResponseEntity<>(HttpStatus.NOT_FOUND));
@@ -932,16 +933,16 @@ public class mainController { // place all hive and zeep apis that arent in conf
 
     @Async("asyncExecutor")
     @PutMapping("/updategroup/{id}")
-    public CompletableFuture<ResponseEntity<groups>> updateGroup(@PathVariable("id") long id, @RequestBody groups Group) { 
-        Optional<groups> groupData = group_repo.findById(id);
+    public CompletableFuture<ResponseEntity<Groups>> updateGroup(@PathVariable("id") long id, @RequestBody Groups Group) { 
+        Optional<Groups> groupData = group_repo.findById(id);
         if (groupData.isPresent()) {
-            groups _groups = groupData.get();
-            _groups.setgroup_name(Group.getgroup_name());
-            _groups.setparent(Group.getparent());
-            _groups.setlocation(Group.getlocation());
-            _groups.setchild(Group.getchild());
-            _groups.setdate_created(Group.getdate_created());
-            _groups.setdate_modified(Group.getdate_modified());
+            Groups _groups = groupData.get();
+            _groups.setGroupName(Group.getGroupName());
+            _groups.setParent(Group.getParent());
+            _groups.setLocation(Group.getLocation());
+            _groups.setChild(Group.getChild());
+            _groups.setDateCreated(Group.getDateCreated());
+            _groups.setDateModified(Group.getDateModified());
             return CompletableFuture.completedFuture(new ResponseEntity<>(group_repo.save(_groups), HttpStatus.OK));
         } else {
             return CompletableFuture.completedFuture(new ResponseEntity<>(HttpStatus.NOT_FOUND));
@@ -950,10 +951,10 @@ public class mainController { // place all hive and zeep apis that arent in conf
 
     @Async("asyncExecutor")
     @PutMapping("/updatedevice/{id}")
-    public CompletableFuture<ResponseEntity<device>> updateDevice(@PathVariable("id") long id, @RequestBody device Device) { 
-        Optional<device> deviceData = device_front.findById(id);
+    public CompletableFuture<ResponseEntity<Device>> updateDevice(@PathVariable("id") long id, @RequestBody Device Device) { 
+        Optional<Device> deviceData = device_front.findById(id);
         if (deviceData.isPresent()) {
-            device _device = deviceData.get();
+            Device _device = deviceData.get();
             _device.setDeviceName(Device.getDeviceName());
             _device.setParent(Device.getParent());
             _device.setLocation(Device.getLocation());
@@ -1001,59 +1002,59 @@ public class mainController { // place all hive and zeep apis that arent in conf
     public CompletableFuture<ResponseEntity<Object>> addDeviceModel(@RequestBody Map<String, String> params) {
         try {
             if (device_model_parameters_repo.searchByManufacturerAndModel(params.get("manufacturer").toString(), params.get("model").toString()) == null) {
-                device_model_parameters new_model = new device_model_parameters();
+                DeviceModelParameters new_model = new DeviceModelParameters();
                 new_model.setModel(params.get("model").toString());
                 new_model.setManufacturer(params.get("manufacturer").toString());
 
                 if (!params.get("mac_address").isEmpty() || (params.get("mac_address") != null)) {
-                    new_model.setMac_address_parameter(params.get("mac_address").toString());
+                    new_model.setMacAddressParameter(params.get("mac_address").toString());
                 }
                 if (!params.get("udp_con_req_url").isEmpty() || (params.get("udp_con_req_url") != null)) {
-                    new_model.setUdp_con_req_url_parameter(params.get("udp_con_req_url").toString());
+                    new_model.setUdpConReqUrlParameter(params.get("udp_con_req_url").toString());
                 }
                 if (!params.get("con_req_url").isEmpty() || (params.get("con_req_url") != null)) {
-                    new_model.setCon_req_url_parameter(params.get("con_req_url").toString());
+                    new_model.setConReqUrlParameter(params.get("con_req_url").toString());
                 }
                 if (!params.get("management_ip").isEmpty() || (params.get("management_ip") != null)) {
-                    new_model.setManagement_ip_parameter(params.get("management_ip").toString());
+                    new_model.setManagementIpParameter(params.get("management_ip").toString());
                 }
                 if (!params.get("public_ip").isEmpty() || (params.get("public_ip") != null)) {
-                    new_model.setPublic_ip_parameter(params.get("public_ip").toString());
+                    new_model.setPublicIpParameter(params.get("public_ip").toString());
                 }
                 if (!params.get("hardware_ver").isEmpty() || (params.get("hardware_ver") != null)) {
-                    new_model.setHardware_ver_parameter(params.get("hardware_ver").toString());
+                    new_model.setHardwareVerParameter(params.get("hardware_ver").toString());
                 }
                 if (!params.get("software_ver").isEmpty() || (params.get("software_ver") != null)) {
-                    new_model.setSoftware_ver_parameter(params.get("software_ver").toString());
+                    new_model.setSoftwareVerParameter(params.get("software_ver").toString());
                 }
 
                 device_model_parameters_repo.save(new_model);
                 return CompletableFuture.completedFuture(new ResponseEntity<>(new_model, HttpStatus.OK));
             } else {
-                device_model_parameters new_model = device_model_parameters_repo.searchByManufacturerAndModel(params.get("manufacturer").toString(), params.get("model").toString());
+                DeviceModelParameters new_model = device_model_parameters_repo.searchByManufacturerAndModel(params.get("manufacturer").toString(), params.get("model").toString());
                 new_model.setModel(params.get("model").toString());
                 new_model.setManufacturer(params.get("manufacturer").toString());
 
                 if (!params.get("mac_address").isEmpty() || (params.get("mac_address") != null)) {
-                    new_model.setMac_address_parameter(params.get("mac_address").toString());
+                    new_model.setMacAddressParameter(params.get("mac_address").toString());
                 }
                 if (!params.get("udp_con_req_url").isEmpty() || (params.get("udp_con_req_url") != null)) {
-                    new_model.setUdp_con_req_url_parameter(params.get("udp_con_req_url").toString());
+                    new_model.setUdpConReqUrlParameter(params.get("udp_con_req_url").toString());
                 }
                 if (!params.get("con_req_url").isEmpty() || (params.get("con_req_url") != null)) {
-                    new_model.setCon_req_url_parameter(params.get("con_req_url").toString());
+                    new_model.setConReqUrlParameter(params.get("con_req_url").toString());
                 }
                 if (!params.get("management_ip").isEmpty() || (params.get("management_ip") != null)) {
-                    new_model.setManagement_ip_parameter(params.get("management_ip").toString());
+                    new_model.setManagementIpParameter(params.get("management_ip").toString());
                 }
                 if (!params.get("public_ip").isEmpty() || (params.get("public_ip") != null)) {
-                    new_model.setPublic_ip_parameter(params.get("public_ip").toString());
+                    new_model.setPublicIpParameter(params.get("public_ip").toString());
                 }
                 if (!params.get("hardware_ver").isEmpty() || (params.get("hardware_ver") != null)) {
-                    new_model.setHardware_ver_parameter(params.get("hardware_ver").toString());
+                    new_model.setHardwareVerParameter(params.get("hardware_ver").toString());
                 }
                 if (!params.get("software_ver").isEmpty() || (params.get("software_ver") != null)) {
-                    new_model.setSoftware_ver_parameter(params.get("software_ver").toString());
+                    new_model.setSoftwareVerParameter(params.get("software_ver").toString());
                 }
 
                 device_model_parameters_repo.save(new_model);
@@ -1067,8 +1068,8 @@ public class mainController { // place all hive and zeep apis that arent in conf
     
     @Async("asyncExecutor")
     @GetMapping("/getRogueDevices")
-    public CompletableFuture<List<device>> getRogueDevices() {
-        List<device> Device = new ArrayList<>();
+    public CompletableFuture<List<Device>> getRogueDevices() {
+        List<Device> Device = new ArrayList<>();
         device_front.findByGroup("unassigned").forEach(Device::add);
         return CompletableFuture.completedFuture(Device);
     }

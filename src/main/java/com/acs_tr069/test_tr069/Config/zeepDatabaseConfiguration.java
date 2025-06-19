@@ -26,7 +26,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
     entityManagerFactoryRef = "zeepEntityManagerFactory",
     transactionManagerRef = "zeepTransactionManager"
 )
-public class zeepDatabaseConfiguration {
+public class ZeepDatabaseConfiguration {
     
     @Autowired
     private Environment env;

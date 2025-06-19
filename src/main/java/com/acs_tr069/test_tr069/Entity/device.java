@@ -6,13 +6,12 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
-
 import lombok.Data;
 
 @Entity
 @Data
 @Table(name = "device") // superior to zeep ver, will retain
-public class device {
+public class Device {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
@@ -51,10 +50,10 @@ public class device {
     @Column(name = "second_wan_mac")
     private String secondWanMac;
     
-    public device() {
+    public Device() {
     }
     
-    public device(String deviceName, String macAddress, String serialNumber, String location, String parent, String dateCreated, String dateModified , String dateOffline, String status, String model, String deviceType) {
+    public Device(String deviceName, String macAddress, String serialNumber, String location, String parent, String dateCreated, String dateModified , String dateOffline, String status, String model, String deviceType) {
         this.deviceName = deviceName;
         this.macAddress = macAddress;
         this.serialNumber = serialNumber;

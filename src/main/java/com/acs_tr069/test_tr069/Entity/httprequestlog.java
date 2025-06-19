@@ -1,47 +1,29 @@
 package com.acs_tr069.test_tr069.Entity;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Table;
+import lombok.Data;
 
+@Data
 @Entity
-public class httprequestlog { // same with zeep ver, will retain
+@Table(name = "httprequestlog")
+public class HttpRequestLog { // same with zeep ver, will retain
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-
     private Long id;
-    private String serial_num;
+
+    @Column(name = "serial_num")
+    private String serialNum;
+
     private String cookie;
     private java.sql.Timestamp lastRequest;
-    private String device_status;
 
-    public Long get_Id(){
-        return id;
-    }
-    public String get_SN(){
-        return serial_num;
-    }
-    public String get_cookie(){
-        return cookie;
-    }
-    public java.sql.Timestamp get_lastRequest(){
-        return lastRequest;
-    }
-    public String get_device_status(){
-        return cookie;
-    }
+    @Column(name = "device_status")
+    private String deviceStatus;
 
-    public void set_SN(String sn){
-        this.serial_num = sn;
-    }
-    public void set_cookie(String cookie){
-        this.cookie = cookie;
-    }
-    public void set_lastRequest(java.sql.Timestamp lastRequest){
-        this.lastRequest = lastRequest;
-    }
-    public void set_device_status(String device_status){
-        this.device_status = device_status;
-    }
 }

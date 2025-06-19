@@ -5,14 +5,11 @@ import org.springframework.boot.configurationprocessor.json.JSONException;
 import org.springframework.boot.configurationprocessor.json.JSONObject;
 import org.springframework.stereotype.Service;
 
-import com.acs_tr069.test_tr069.CWMPResponses.tr069Response;
-
 @Service
-public class rlDeviceService {
+public class RlDeviceService {
 
     @Autowired
-    private tr069TaskHandlerService task_handler;
-
+    private Tr069TaskHandlerService task_handler;
 
     public void addWANConnectionDevice(String SN, String Params){
         try {

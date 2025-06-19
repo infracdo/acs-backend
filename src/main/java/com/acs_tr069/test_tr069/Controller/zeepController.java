@@ -32,16 +32,16 @@ import org.springframework.web.context.request.async.DeferredResult;
 
 import com.acs_tr069.test_tr069.CWMPResponses.tr069Response;
 import com.acs_tr069.test_tr069.CWMPResponses.GetSoapFromString;
-import com.acs_tr069.test_tr069.Entity.httprequestlog;
-import com.acs_tr069.test_tr069.Entity.taskhandler;
-import com.acs_tr069.test_tr069.Entity.devices;
-import com.acs_tr069.test_tr069.Entity.device;
+import com.acs_tr069.test_tr069.Entity.HttpRequestLog;
+import com.acs_tr069.test_tr069.Entity.TaskHandler;
+import com.acs_tr069.test_tr069.Entity.Devices;
+import com.acs_tr069.test_tr069.Entity.Device;
 
-import com.acs_tr069.test_tr069.Repo.httplogreqRepo;
-import com.acs_tr069.test_tr069.Repo.taskhandlerRepo;
+import com.acs_tr069.test_tr069.Repo.HttpLogReqRepository;
+import com.acs_tr069.test_tr069.Repo.TaskHandlerRepository;
 import com.acs_tr069.test_tr069.Services.HelperService;
-import com.acs_tr069.test_tr069.Repo.devicesRepository;
-import com.acs_tr069.test_tr069.Repo.device_frontendRepository;
+import com.acs_tr069.test_tr069.Repo.DevicesRepository;
+import com.acs_tr069.test_tr069.Repo.DeviceFrontendRepository;
 
 import com.acs_tr069.test_tr069.StoreRequestResult.GetResponseResult;
 import com.acs_tr069.test_tr069.ZabbixApi.ZabbixApiRPCCalls;
@@ -49,16 +49,16 @@ import com.acs_tr069.test_tr069.CWMPResponses.RandomCodeGen;
 
 @CrossOrigin(origins = "*")
 @RequestMapping(path = "/zeep/")
-public class zeepController { 
+public class ZeepController { 
 
     @Autowired
-    private httplogreqRepo httplogreqRepo;
+    private HttpLogReqRepository httplogreqRepo;
     @Autowired
-    private taskhandlerRepo taskhandlerRepo;
+    private TaskHandlerRepository taskhandlerRepo;
     @Autowired
-    private devicesRepository devicesRepo; 
+    private DevicesRepository devicesRepo; 
     @Autowired
-    private device_frontendRepository device_front;
+    private DeviceFrontendRepository deviceFront;
     @Autowired
     private HelperService helperService;
 
@@ -73,8 +73,7 @@ public class zeepController {
     private ZabbixApiRPCCalls zabbixRPC;
 
     @PostMapping(value = "/")
-    private DeferredResult<ResponseEntity<String>> TestDevice(@RequestBody(required = false) String xmlPayload,
-            HttpServletRequest request, HttpServletResponse response) {
+    private DeferredResult<ResponseEntity<String>> TestDevice(@RequestBody(required = false) String xmlPayload, HttpServletRequest request, HttpServletResponse response) {
         System.out.println(xmlPayload);
         DeferredResult<ResponseEntity<String>> result = new DeferredResult<>();
         String DeviceSerialNum = null;
@@ -120,21 +119,18 @@ public class zeepController {
                     response.addHeader("Set-Cookie", "session=" + SNCookie);
                     responsebody = tr069response.InformResponse();
 
-                    //System.out.println("End: " + LocalTime.now());
-                    device check_device = device_front.getBySerialNum(SN);
-                    if(check_device == null){
+                    Device checkDevice = deviceFront.getBySerialNum(SN);
+                    if(checkDevice == null){
                         try {
                             UpdateDevicesTable(xmlPayload);
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
-                        result.setResult(ResponseEntity.status(HttpStatus.NO_CONTENT).contentType(MediaType.TEXT_XML)
-                                .body(null));
+                        result.setResult(ResponseEntity.status(HttpStatus.NO_CONTENT).contentType(MediaType.TEXT_XML).body(null));
                     }
                     else {
                         CheckDeviceEventCode(xmlPayload);
-                        result.setResult(ResponseEntity.status(HttpStatus.OK).contentType(MediaType.TEXT_XML)
-                                .body(responsebody));
+                        result.setResult(ResponseEntity.status(HttpStatus.OK).contentType(MediaType.TEXT_XML).body(responsebody));
                     }
                 }
 
@@ -166,7 +162,7 @@ public class zeepController {
             String DeviceSN = helperService.GetDeviceSerialNum(request);
 
             if (taskhandlerRepo.findBySerialNumEquals(DeviceSN).isEmpty() == false) {
-                List<taskhandler> task = taskhandlerRepo.findBySerialNumEquals(DeviceSN);
+                List<TaskHandler> task = taskhandlerRepo.findBySerialNumEquals(DeviceSN);
                 String Method = task.get(0).get_method().toString();
                 String Parameters = task.get(0).get_parameters().toString();
                 String Optional = task.get(0).get_optional();
@@ -194,7 +190,6 @@ public class zeepController {
                             taskhandlerRepo.delete(taskhandlerRepo.getByID(id + 2));
                             taskhandlerRepo.delete(taskhandlerRepo.getByID(id + 3));
 
-                            //System.out.println("End: " + LocalTime.now());
                             result.setResult(ResponseEntity.status(HttpStatus.NO_CONTENT).contentType(MediaType.TEXT_XML).body(" "));
                         }
                     }
@@ -204,7 +199,6 @@ public class zeepController {
 
                 taskhandlerRepo.delete(taskhandlerRepo.getByID(id));
 
-                //System.out.println("End: " + LocalTime.now());
                 result.setResult(
                         ResponseEntity.status(HttpStatus.OK).contentType(MediaType.TEXT_XML).body(responsebody));
             }
@@ -218,7 +212,6 @@ public class zeepController {
                 result.setResult(ResponseEntity.status(HttpStatus.NO_CONTENT).contentType(MediaType.TEXT_XML).body(null));
             }
 
-            //System.out.println("End: " + LocalTime.now());
         }, "MyThread for " + DeviceSerialNum).start();
 
         return result;
@@ -243,8 +236,8 @@ public class zeepController {
             NumEvent = soapBody.getElementsByTagName("Event").item(0).getChildNodes().getLength();
             String serial_num = soapBody.getElementsByTagName("SerialNumber").item(0).getTextContent();
             
-            httprequestlog logRequest = httplogreqRepo.getBySerialNumEquals(serial_num);
-            logRequest.set_lastRequest(new Timestamp(System.currentTimeMillis()));
+            HttpRequestLog logRequest = httplogreqRepo.getBySerialNumEquals(serial_num);
+            logRequest.setLastRequest(new Timestamp(System.currentTimeMillis()));
             httplogreqRepo.save(logRequest);
 
             for (int i = 0; i < NumEvent; i++) {
@@ -254,7 +247,7 @@ public class zeepController {
                     String ObjectName = "{,Command:macc nat-config vlan 233 network 10.233.2.0 255.255.255.0,Command:interface BVI 233,Command:ip address 10.233.2.1 255.255.255.0,Command:ip nat inside,Command:end,Command:write,}";
                     helperService.SaveTask(serial_num, "Command", ObjectName, "config");
 
-                    device device = device_front.getBySerialNum(serial_num);
+                    Device device = deviceFront.getBySerialNum(serial_num);
                     String deviceGroup = device.getParent();
                     if(!deviceGroup.matches("unassigned")){
                         String[] Devicesgroups = deviceGroup.split("/");
@@ -272,7 +265,7 @@ public class zeepController {
                     }
                 }
                 if (EventCode.contains("BOOTSTRAP")) {
-                    if (device_front.findBySerialNum(serial_num).isEmpty()) {
+                    if (deviceFront.findBySerialNum(serial_num).isEmpty()) {
                         try {
                             UpdateDevicesTable(Payload);
                         } catch (JSONException e) {
@@ -281,11 +274,11 @@ public class zeepController {
                         String ObjectName = "{,Command:macc nat-config vlan 233 network 10.233.2.0 255.255.255.0,Command:interface BVI 233,Command:ip address 10.233.2.1 255.255.255.0,Command:ip nat inside,Command:end,Command:write,}";
                         helperService.SaveTask(serial_num, "Command", ObjectName, "config");
                     } else {
-                        device device_to_bootstrap = device_front.getBySerialNum(serial_num);
+                        Device device_to_bootstrap = deviceFront.getBySerialNum(serial_num);
                         if(!device_to_bootstrap.getParent().matches("unassigned")){
                             if (device_to_bootstrap.getStatus().contains("syncing") == false) {
                                 device_to_bootstrap.setStatus("syncing");
-                                device_front.save(device_to_bootstrap);
+                                deviceFront.save(device_to_bootstrap);
                                 Bootstraping(serial_num);
                             }
                         }
@@ -355,7 +348,7 @@ public class zeepController {
             }
             // helperService.SaveTask(serial_num, "GetParameterValues", "Device.WiFi.SSID.", "null");
 
-            device device = device_front.getBySerialNum(serial_num);
+            Device device = deviceFront.getBySerialNum(serial_num);
             String deviceGroup = device.getParent();
             String[] Devicesgroups = deviceGroup.split("/");
             for (int i = 1; i < (Devicesgroups.length + 1); i++) {
@@ -375,7 +368,7 @@ public class zeepController {
             ObjectName = "{,Command:cwmp,Command:timer cpe-timeout 90,Command:cpe inform interval 180,Command:end,Command:write,}";
             helperService.SaveTask(serial_num, "Command", ObjectName, "config");
 
-            List<device> deviceTobeset = device_front.findBySerialNum(serial_num);
+            List<Device> deviceTobeset = deviceFront.findBySerialNum(serial_num);
             String deviceName = deviceTobeset.get(0).getDeviceName().replaceAll(" ", "_");
             if (deviceName == null) {
                 deviceName = "DefaultAPName";
@@ -384,12 +377,12 @@ public class zeepController {
             helperService.SaveTask(serial_num, "Command", ObjectName, "config");
 
             while (true) {
-                List<taskhandler> remainingTask = taskhandlerRepo.findBySerialNumEquals(serial_num);
+                List<TaskHandler> remainingTask = taskhandlerRepo.findBySerialNumEquals(serial_num);
                 Integer NumRemainingTask = remainingTask.size();
                 if (NumRemainingTask < 1) {
-                    device device_to_bootstrap = device_front.getBySerialNum(serial_num);
+                    Device device_to_bootstrap = deviceFront.getBySerialNum(serial_num);
                     device_to_bootstrap.setStatus("synced");
-                    device_front.save(device_to_bootstrap);
+                    deviceFront.save(device_to_bootstrap);
                     break;
                 }
             }
@@ -420,8 +413,8 @@ public class zeepController {
                 e2.printStackTrace();
             }
     
-            Iterable<device> device_list = device_front.findAll();
-            for (device device : device_list) {
+            Iterable<Device> device_list = deviceFront.findAll();
+            for (Device device : device_list) {
                 String device_name = device.getDeviceName();
                 String hostid = null;
                 try {
@@ -495,15 +488,15 @@ public class zeepController {
                                 e.printStackTrace();
                             }
                         }
-                        httprequestlog currentlog = httplogreqRepo.getBySerialNumEquals(device.getSerialNumber());
-                        currentlog.set_device_status(device.getStatus());
+                        HttpRequestLog currentlog = httplogreqRepo.getBySerialNumEquals(device.getSerialNumber());
+                        currentlog.setDeviceStatus(device.getStatus());
                         httplogreqRepo.save(currentlog);
                     }
                     if(device.getStatus().matches("online")){
-                        httprequestlog currentlog = httplogreqRepo.getBySerialNumEquals(device.getSerialNumber());
+                        HttpRequestLog currentlog = httplogreqRepo.getBySerialNumEquals(device.getSerialNumber());
         
-                        if(currentlog.get_device_status() == null){
-                            currentlog.set_device_status(device.getStatus());
+                        if(currentlog.getDeviceStatus() == null){
+                            currentlog.setDeviceStatus(device.getStatus());
                             httplogreqRepo.save(currentlog);
                             //System.out.println(hostid);
                             if(hostid != null){
@@ -568,8 +561,8 @@ public class zeepController {
                             }
     
                         }else{
-                            if(currentlog.get_device_status().matches(device.getStatus()) == false){
-                                currentlog.set_device_status(device.getStatus());
+                            if(currentlog.getDeviceStatus().matches(device.getStatus()) == false){
+                                currentlog.setDeviceStatus(device.getStatus());
                                 httplogreqRepo.save(currentlog);
                                 if(hostid != null){
                                     JSONArray items = null;
@@ -633,7 +626,7 @@ public class zeepController {
                                 }
                             }
                         }
-                        currentlog.set_device_status(device.getStatus());
+                        currentlog.setDeviceStatus(device.getStatus());
                         httplogreqRepo.save(currentlog);
                     }
                 }   
@@ -643,21 +636,21 @@ public class zeepController {
 
     @Scheduled(fixedRate = 60000)
     private void DeviceStatusUpdate(){        
-        Iterable<httprequestlog> listOfDevices = httplogreqRepo.findAll();
-        for (httprequestlog httprequestlog : listOfDevices) {
+        Iterable<HttpRequestLog> listOfDevices = httplogreqRepo.findAll();
+        for (HttpRequestLog httprequestlog : listOfDevices) {
             Long interval;
             Timestamp currentTime = new Timestamp(System.currentTimeMillis());
             Long timeInterval = (long) 0;
             try {
-                timeInterval = currentTime.getTime() - httprequestlog.get_lastRequest().getTime();    
+                timeInterval = currentTime.getTime() - httprequestlog.getLastRequest().getTime();    
             } catch (Exception e) {
                 timeInterval = (long) (60000*5);
             }
             interval = timeInterval/60000;
-            device curent_device = null;
+            Device curent_device = null;
             while(true){
-                if(httprequestlog.get_SN()!=null){
-                    curent_device = device_front.getBySerialNum(httprequestlog.get_SN());
+                if(httprequestlog.getSerialNum()!=null){
+                    curent_device = deviceFront.getBySerialNum(httprequestlog.getSerialNum());
                     break;
                 }
             } 
@@ -667,14 +660,14 @@ public class zeepController {
                     DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");  
                     LocalDateTime now = LocalDateTime.now();
                     curent_device.setDateOffline(dtf.format(now));
-                    device_front.save(curent_device);
-                    helperService.UpdateDeviceStatus(httprequestlog.get_SN(), "offline");
+                    deviceFront.save(curent_device);
+                    helperService.UpdateDeviceStatus(httprequestlog.getSerialNum(), "offline");
                     if(curent_device.getParent().matches("unassigned")){
-                        device_front.delete(curent_device);
+                        deviceFront.delete(curent_device);
                     }
                 }
                 else{
-                    helperService.UpdateDeviceStatus(httprequestlog.get_SN(), "online");
+                    helperService.UpdateDeviceStatus(httprequestlog.getSerialNum(), "online");
                 }
             }
         }
@@ -701,7 +694,7 @@ public class zeepController {
         JSONObject object = new JSONObject('{'+sb.toString()+'}');
         
         if(devicesRepo.findBySerialNum(InformData.getElementsByTagName("SerialNumber").item(0).getTextContent()).isEmpty()){
-            devices newDevice = new devices();
+            Devices newDevice = new Devices();
             newDevice.setSerialNum(InformData.getElementsByTagName("SerialNumber").item(0).getTextContent());
             newDevice.setManufacturer(InformData.getElementsByTagName("Manufacturer").item(0).getTextContent());
             newDevice.setOui(InformData.getElementsByTagName("OUI").item(0).getTextContent());
@@ -710,7 +703,7 @@ public class zeepController {
             newDevice.setUdpConReqUrl(object.get("Device.ManagementServer.UDPConnectionRequestAddress").toString());
             devicesRepo.save(newDevice);
         }else{
-            devices deviceUpdate = devicesRepo.getBySerialNum(InformData.getElementsByTagName("SerialNumber").item(0).getTextContent());
+            Devices deviceUpdate = devicesRepo.getBySerialNum(InformData.getElementsByTagName("SerialNumber").item(0).getTextContent());
             deviceUpdate.setSerialNum(InformData.getElementsByTagName("SerialNumber").item(0).getTextContent());
             deviceUpdate.setManufacturer(InformData.getElementsByTagName("Manufacturer").item(0).getTextContent());
             deviceUpdate.setOui(InformData.getElementsByTagName("OUI").item(0).getTextContent());
@@ -742,8 +735,8 @@ public class zeepController {
         JSONObject object = new JSONObject('{'+sb.toString()+'}');
         //System.out.println("Try JsonFind: " +object.get("Device.DeviceInfo.SoftwareVersion").toString());
 
-        if(device_front.findBySerialNum(InformData.getElementsByTagName("SerialNumber").item(0).getTextContent()).isEmpty()){
-            device unassigned_device = new device();
+        if(deviceFront.findBySerialNum(InformData.getElementsByTagName("SerialNumber").item(0).getTextContent()).isEmpty()){
+            Device unassigned_device = new Device();
             unassigned_device.setSerialNumber(InformData.getElementsByTagName("SerialNumber").item(0).getTextContent());
             unassigned_device.setMacAddress(object.get("Device.DeviceInfo.X_WWW-RUIJIE-COM-CN_MACAddress").toString());
             unassigned_device.setModel(InformData.getElementsByTagName("ProductClass").item(0).getTextContent());
@@ -755,10 +748,10 @@ public class zeepController {
             //    newDevice.setstatus("online");
             //}
             unassigned_device.setActivated(false);
-            device_front.save(unassigned_device);
+            deviceFront.save(unassigned_device);
 
         }else{
-            device newDevice = device_front.getBySerialNum(InformData.getElementsByTagName("SerialNumber").item(0).getTextContent());
+            Device newDevice = deviceFront.getBySerialNum(InformData.getElementsByTagName("SerialNumber").item(0).getTextContent());
             newDevice.setSerialNumber(InformData.getElementsByTagName("SerialNumber").item(0).getTextContent());
             newDevice.setMacAddress(object.get("Device.DeviceInfo.X_WWW-RUIJIE-COM-CN_MACAddress").toString());
             newDevice.setModel(InformData.getElementsByTagName("ProductClass").item(0).getTextContent());
@@ -767,17 +760,17 @@ public class zeepController {
                 newDevice.setStatus("online");
             }
             newDevice.setActivated(true);
-            device_front.save(newDevice);
+            deviceFront.save(newDevice);
         }
     }
     
     @Async("asyncExecutor")
     @RequestMapping(value = "/MoveDeviceGroup/{SerialNum}") 
     private CompletableFuture<String> MoveDeviceGroup(@PathVariable String SerialNum) {
-        device device_to_bootstrap = device_front.getBySerialNum(SerialNum);
+        Device device_to_bootstrap = deviceFront.getBySerialNum(SerialNum);
         if (device_to_bootstrap.getStatus().contains("syncing") == false) {
             device_to_bootstrap.setStatus("syncing");
-            device_front.save(device_to_bootstrap);
+            deviceFront.save(device_to_bootstrap);
             Bootstraping(SerialNum);
         }
         return CompletableFuture.completedFuture("MoveDeviceGroup Initiated");

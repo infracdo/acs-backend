@@ -10,8 +10,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.stereotype.Service;
-
-import com.acs_tr069.test_tr069.zeep.repository.AccSessionsRepository;
 import com.acs_tr069.test_tr069.zeep.repository.AccTransactionsRepository;
 
 @Service
@@ -20,12 +18,9 @@ public class MonitoringService {
     private static final Logger log = LoggerFactory.getLogger(MonitoringService.class);
 
     private final AccTransactionsRepository accTransactionsRepository;
-    private final AccSessionsRepository accSessionsRepository;
 
-    public MonitoringService(AccTransactionsRepository accTransactionsRepository,
-                            AccSessionsRepository accSessionsRepository) {
+    public MonitoringService(AccTransactionsRepository accTransactionsRepository) {
         this.accTransactionsRepository = accTransactionsRepository;
-        this.accSessionsRepository = accSessionsRepository;
     }
 
     // Return current number of connected users

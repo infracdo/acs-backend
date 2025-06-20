@@ -9,7 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
 
-import com.acs_tr069.test_tr069.CWMPResponses.tr069Response;
+import com.acs_tr069.test_tr069.CWMPResponses.Tr069Response;
 import com.acs_tr069.test_tr069.Entity.Devices;
 import com.acs_tr069.test_tr069.Entity.TaskHandler;
 import com.acs_tr069.test_tr069.Repo.DevicesRepository;
@@ -19,7 +19,7 @@ import com.acs_tr069.test_tr069.UDP.udp_sender;
 @Service
 public class Tr069TaskHandlerService {
     
-    private tr069Response tr069response;
+    private Tr069Response tr069response;
 
     @Autowired
     private TaskHandlerRepository taskhandlerRepo;

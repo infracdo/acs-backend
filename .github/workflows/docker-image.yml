@@ -12,6 +12,10 @@ jobs:
     runs-on: self-hosted
 
     steps:
+      - name: Remove any stale git lock files
+        run: |
+          find .git/refs/heads/ -name '*.lock' -delete
+          
       # Step 1: Checkout the code
       - name: Checkout repository
         uses: actions/checkout@v3
@@ -27,10 +31,10 @@ jobs:
       - name: Build Docker Image
         run: 
           # docker build --target build -t my-image:build .
-          docker build -t acs-backend-merge:test-0.2 .
+          docker build -t acs-backend-merge:test-0.3 .
 
       # Step 4: Push the Docker image
       - name: Push Docker Image
         run: |
-          docker tag acs-backend-merge:test-0.2 infracdo/acs-backend-merge:test-0.2
-          docker push infracdo/acs-backend-merge:test-0.2
+          docker tag acs-backend-merge:test-0.3 infracdo/acs-backend-merge:test-0.3
+          docker push infracdo/acs-backend-merge:test-0.3

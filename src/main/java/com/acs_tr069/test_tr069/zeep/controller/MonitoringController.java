@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,15 +20,11 @@ import com.acs_tr069.test_tr069.zeep.service.MonitoringService;
 @RequestMapping(path = "/api/monitoring/")
 @CrossOrigin("*")
 public class MonitoringController {
+    
+    @Autowired
+    private MonitoringService monitoringService;
 
-    private final MonitoringService monitoringService;
-
-    public MonitoringController(MonitoringService monitoringService) {
-        this.monitoringService = monitoringService;
-    }
-
-    // Get current number of connected users
-    @GetMapping("/count-current-connected-users")
+    @GetMapping("/count-current-connected-users") // Get current number of connected users
     public ResponseEntity<Map<String, Object>> getCountCurrentConnectedUsers() {
         long countConnectedUsers = monitoringService.getCountCurrentConnectedUsers();
 
@@ -37,8 +34,7 @@ public class MonitoringController {
         return ResponseEntity.ok(response);
     }
 
-    // Get current number of connected access points (APs)
-    @GetMapping("/count-current-connected-aps")
+    @GetMapping("/count-current-connected-aps") // Get current number of connected access points (APs)
     public ResponseEntity<Map<String, Object>> getCountCurrentConnectedAPs() {
         long countConnectedAPs = monitoringService.getCountCurrentConnectedAPs();
 
@@ -48,8 +44,7 @@ public class MonitoringController {
         return ResponseEntity.ok(response);
     }
 
-    // Get total user connections for today
-    @GetMapping("/total-user-connections-today")
+    @GetMapping("/total-user-connections-today") // Get total user connections for today
     public ResponseEntity<Map<String, Object>> getTotalUserConnectionsToday() {
         long totalConnectedUsers = monitoringService.getTotalUserConnectionsToday();
 
@@ -59,8 +54,7 @@ public class MonitoringController {
         return ResponseEntity.ok(response);
     }
 
-    // Get total bandwidth consumption for today
-    @GetMapping("/total-bandwidth-consumption-today")
+    @GetMapping("/total-bandwidth-consumption-today") // Get total bandwidth consumption for today
     public ResponseEntity<Map<String, Object>> getTotalBandwidthConsumptionToday() {
         double totalBandwidthConsumptionToday = monitoringService.getTotalBandwidthConsumptionToday();
 
@@ -70,8 +64,7 @@ public class MonitoringController {
         return ResponseEntity.ok(response);
     }
 
-    // Get average connection time
-    @GetMapping("/avg-connection-time")
+    @GetMapping("/avg-connection-time") // Get average connection time
     public ResponseEntity<Map<String, Object>> getAvgConnectionTime() {
         double averageConnectionTime = monitoringService.getAvgConnectionTime();
 
@@ -82,8 +75,7 @@ public class MonitoringController {
 
     }
 
-    // Get average bandwidth per connection
-    @GetMapping("/average-bandwidth-per-connection")
+    @GetMapping("/average-bandwidth-per-connection") // Get average bandwidth per connection
     public ResponseEntity<Map<String, Object>> getAvgBandwidthPerConnection() {
         double avgBandwidthPerConnection = monitoringService.getAvgBandwidthPerConnection();
 
@@ -93,8 +85,7 @@ public class MonitoringController {
         return ResponseEntity.ok(response);
     }
 
-    // Get number of currently connected users per access point (AP)
-    @GetMapping("/count-current-connected-users-per-ap")
+    @GetMapping("/count-current-connected-users-per-ap") // Get number of currently connected users per ap
     public ResponseEntity<List<Map<String, Object>>> getCountCurrentConnectedUsersPerAp() {
         Map<String, Long> counts = monitoringService.getCountCurrentConnectedUsersPerAP();
         
@@ -110,8 +101,7 @@ public class MonitoringController {
         return ResponseEntity.ok(response);
     }
 
-    // Get list of currently connected users per access point (AP)
-    @GetMapping("/current-connected-users-per-ap")
+    @GetMapping("/current-connected-users-per-ap") // Get list of currently connected users per ap
     public ResponseEntity<List<Map<String, Object>>> getCurrentConnectedUsersPerAP() {
         Map<String, List<Map<String, Object>>> currentConnectedUsersPerAP = monitoringService.getCurrentConnectedUsersPerAP();
         List<Map<String, Object>> response = new ArrayList<>();
@@ -126,8 +116,7 @@ public class MonitoringController {
         return ResponseEntity.ok(response);
     }
 
-    // Get list of currently connected access points (AP)
-    @GetMapping("/current-connected-aps")
+    @GetMapping("/current-connected-aps") // Get list of currently connected ap
     public ResponseEntity<Map<String, Object>> getCurrentConnectedAPs() {
         List<String> connectedAPs = monitoringService.getCurrentConnectedAPs();
 
@@ -137,4 +126,5 @@ public class MonitoringController {
         response.put("data", connectedAPs);
         return ResponseEntity.ok(response);
     }
+    
 }

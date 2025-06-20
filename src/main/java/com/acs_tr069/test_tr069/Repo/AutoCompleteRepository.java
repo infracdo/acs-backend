@@ -9,7 +9,7 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface AutoCompleteRepository extends CrudRepository<AutoComplete, Long> {
+public interface AutoCompleteRepository extends CrudRepository<AutoComplete, Integer> {
 
     @Query(value = "SELECT * FROM auto_complete WHERE device_model = ?1", nativeQuery = true)
     List<AutoComplete> findByDeviceModel(String device_model);

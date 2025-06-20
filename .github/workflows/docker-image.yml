@@ -31,10 +31,10 @@ jobs:
       - name: Build Docker Image
         run: 
           # docker build --target build -t my-image:build .
-          docker build -t acs-backend-merge:test-0.3 .
+          docker build -t acs-backend-merge:test-0.4 .
 
       # Step 4: Push the Docker image
       - name: Push Docker Image
         run: |
-          docker tag acs-backend-merge:test-0.3 infracdo/acs-backend-merge:test-0.3
-          docker push infracdo/acs-backend-merge:test-0.3
+          docker tag acs-backend-merge:test-0.4 infracdo/acs-backend-merge:test-0.4
+          docker push infracdo/acs-backend-merge:test-0.4

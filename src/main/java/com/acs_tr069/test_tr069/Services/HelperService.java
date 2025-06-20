@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.client.RestTemplate;
 
 import com.acs_tr069.test_tr069.CWMPResponses.GetSoapFromString;
-import com.acs_tr069.test_tr069.CWMPResponses.tr069Response;
+import com.acs_tr069.test_tr069.CWMPResponses.Tr069Response;
 import com.acs_tr069.test_tr069.Entity.ClientList;
 import com.acs_tr069.test_tr069.Entity.CpeResponseLog;
 import com.acs_tr069.test_tr069.Entity.Device;
@@ -67,7 +67,7 @@ public class HelperService {
     @Autowired
     private GroupCommandRepository GroupCommandRepo;
 
-    private tr069Response tr069response;
+    private Tr069Response tr069response;
     private GetSoapFromString getSoap;
     private StringBuilder faults = new StringBuilder();
 

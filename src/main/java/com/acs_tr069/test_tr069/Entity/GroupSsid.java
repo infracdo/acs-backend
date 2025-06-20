@@ -52,21 +52,21 @@ public class GroupSsid { // same with zeep ver, will retain
     
     public GroupSsid() {
 	}
-	public GroupSsid(String ssid, String forward_mode, int vlan_id,int wlan_id, String encryption_mode, String passphrase, boolean limitless, int uplink, int downlink, boolean auth, String portal_url, String portal_ip, String parent, String gateway_id, boolean seamless) {
+	public GroupSsid(String ssid, String forward_mode, int vlanId,int wlanId, String encryptionMode, String passphrase, boolean limitless, int uplink, int downlink, boolean auth, String portalUrl, String portalIp, String parent, String gatewayId, boolean seamless) {
 		this.ssid = ssid;
 		this.forwardMode = forward_mode;
-		this.vlanId = vlan_id;
-		this.wlanId = wlan_id;
-		this.encryptionMode = encryption_mode;
+		this.vlanId = vlanId;
+		this.wlanId = wlanId;
+		this.encryptionMode = encryptionMode;
 		this.passphrase = passphrase;
 		this.limitless = limitless;
 		this.uplink = uplink;
 		this.downlink = downlink;
 		this.auth = auth;
-		this.portalUrl = portal_url;
-		this.portalIp = portal_ip;
+		this.portalUrl = portalUrl;
+		this.portalIp = portalIp;
 		this.parent = parent;
-		this.gatewayId = gateway_id;
+		this.gatewayId = gatewayId;
 		this.seamless = seamless;
 	}	
 }

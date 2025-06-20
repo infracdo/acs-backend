@@ -119,10 +119,10 @@ public class HelperService {
 
     public void SaveTask(String SN, String Method, String Parameters, String Optional) {
         TaskHandler newTasK = new TaskHandler();
-        newTasK.set_SN(SN);
-        newTasK.set_method(Method);
-        newTasK.set_parameters(Parameters);
-        newTasK.set_optional(Optional);
+        newTasK.setSerialNum(SN);
+        newTasK.setMethod(Method);
+        newTasK.setParameters(Parameters);
+        newTasK.setOptional(Optional);
         taskhandlerRepo.save(newTasK);
         try {
             Devices current_device = devicesRepo.getBySerialNum(SN);

@@ -9,19 +9,18 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import com.acs_tr069.test_tr069.zeep.repository.AccTransactionsRepository;
 
 @Service
 public class MonitoringService {
 
+    @Autowired
+    private AccTransactionsRepository accTransactionsRepository;
+
     private static final Logger log = LoggerFactory.getLogger(MonitoringService.class);
-
-    private final AccTransactionsRepository accTransactionsRepository;
-
-    public MonitoringService(AccTransactionsRepository accTransactionsRepository) {
-        this.accTransactionsRepository = accTransactionsRepository;
-    }
 
     // Return current number of connected users
     public long getCountCurrentConnectedUsers() {

@@ -272,9 +272,9 @@ public class HiveController {
             if (!DeviceSN.contains("None")) { 
                 if (taskhandlerRepo.findBySerialNumEquals(DeviceSN).isEmpty() == false) {
                     List<TaskHandler> task = taskhandlerRepo.findBySerialNumEquals(DeviceSN);
-                    String Method = task.get(0).get_method().toString();
-                    String Parameters = task.get(0).get_parameters().toString();
-                    String Optional = task.get(0).get_optional();
+                    String Method = task.get(0).getMethod().toString();
+                    String Parameters = task.get(0).getParameters().toString();
+                    String Optional = task.get(0).getOptional();
 
                     if (Optional.contains("AddSSID")) {
                         if (getResponsetype.contains("GetParameterValuesResponse")) {

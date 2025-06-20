@@ -3,8 +3,8 @@ name: Build and Push Docker Image
 on:
   push:
     branches:
-      - acs-test  # Trigger on pushes to the main branch
-  pull_request:  # Trigger on pull requests
+      - acs-backend-integration  # Trigger on pushes to the main branch
+#  pull_request:  # Trigger on pull requests
 
 jobs:
   build-and-push:
@@ -20,17 +20,17 @@ jobs:
       - name: Log in to DockerHub
         uses: docker/login-action@v2
         with:
-          username: infracdo # ${{ secrets.DOCKER_USERNAME }} # Add DOCKER_USERNAME secret in GitHub
-          password: dckr_pat__OLCfPrg82w1BYMpRc0aQbVzV1M # ${{ secrets.DOCKER_PASSWORD }} # Add DOCKER_PASSWORD secret in GitHub
+          username: ${{ secrets.DOCKER_USERNAME }} # Add DOCKER_USERNAME secret in GitHub
+          password: ${{ secrets.DOCKER_PASSWORD }} # Add DOCKER_PASSWORD secret in GitHub
 
       # Step 3: Build the Docker image
       - name: Build Docker Image
         run: 
           # docker build --target build -t my-image:build .
-          docker build -t acs-backend:test-0.2 .
+          docker build -t acs-backend-merge:test-0.2 .
 
       # Step 4: Push the Docker image
       - name: Push Docker Image
         run: |
-          docker tag acs-backend:test-0.2 infracdo/acs-backend:test-0.2
-          docker push infracdo/acs-backend:test-0.2
+          docker tag acs-backend-merge:test-0.2 infracdo/acs-backend-merge:test-0.2
+          docker push infracdo/acs-backend-merge:test-0.2

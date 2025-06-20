@@ -32,7 +32,7 @@ import org.springframework.web.context.request.async.DeferredResult;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import com.acs_tr069.test_tr069.CWMPResponses.tr069Response;
+import com.acs_tr069.test_tr069.CWMPResponses.Tr069Response;
 import com.acs_tr069.test_tr069.CWMPResponses.GetSoapFromString;
 import com.acs_tr069.test_tr069.Entity.HttpRequestLog;
 import com.acs_tr069.test_tr069.Entity.TaskHandler;
@@ -83,7 +83,7 @@ public class HiveController {
     Integer stage = 0;
     Boolean SSIDAdded = false;
 
-    private tr069Response tr069response;
+    private Tr069Response tr069response;
     private GetSoapFromString getSoap;
     private RandomCodeGen randomGen;
 

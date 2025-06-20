@@ -1,12 +1,6 @@
 package com.acs_tr069.test_tr069.CWMPResponses;
 
-import java.util.Arrays;
-import java.util.List;
-import com.acs_tr069.test_tr069.CWMPResponses.Converter;
-
-public class tr069Response {
-
-    
+public class Tr069Response {
 
     public static String AddObject(String ObjectName){
         StringBuilder sb = new StringBuilder();

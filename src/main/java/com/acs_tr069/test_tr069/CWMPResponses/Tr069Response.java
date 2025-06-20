@@ -1,6 +1,6 @@
 package com.acs_tr069.test_tr069.CWMPResponses;
 
-public class tr069Response {
+public class Tr069Response {
 
     public static String AddObject(String ObjectName){
         StringBuilder sb = new StringBuilder();

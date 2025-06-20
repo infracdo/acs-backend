@@ -7,9 +7,6 @@ import javax.persistence.Id;
 import javax.persistence.Column;
 import javax.persistence.Table;
 
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
-
 import lombok.Data;
 
 @Data
@@ -28,11 +25,9 @@ public class Groups { // superior to zeep ver, will retain
     private String parent;
     private String child;
 
-    @CreationTimestamp
 	@Column(name = "date_created")
     private String dateCreated;
 
-    @UpdateTimestamp
 	@Column(name = "date_modified")
     private String dateModified;
 
